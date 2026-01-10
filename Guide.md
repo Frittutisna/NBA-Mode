@@ -5,10 +5,10 @@
 - [Links: Balancer, Flowchart, Script](#links-balancer-flowchart-script)
 - [Overview: Those Long Setting Codes](#overview-those-long-setting-codes)
 - [Comparison: What's The Difference?](#comparison-whats-the-difference)
-- [Lineup: Away and Home, Captains](#lineup-away-and-home-captains)
-- [Score: Check the TDIFF](#score-check-the-tdiff)
+- [Lineup: Away And Home, Captains](#lineup-away-and-home-captains)
+- [Score: Check The TDIFF](#score-check-the-tdiff)
 - [Ending: Elam, Overtime](#ending-elam-overtime)
-- [Format: Best-of-7, Round Robin, Knockouts](#format-best-of-7-round-robin-knockouts)
+- [Format: Best-Of-7, Round Robin, Knockouts](#format-best-of-7-round-robin-knockouts)
 - [Manual: What Do I *Really* Do?](#manual-what-do-i-really-do)
 
 ## TLDR: What Do I Do?
@@ -38,7 +38,7 @@
     <tr>
         <td style="text-align:center">Regulation</td>
         <td style="text-align:center">24</td>
-        <td rowspan="2" style="text-align:center"><strong>10</strong></td>
+        <td rowspan="2" style="text-align:center">10</td>
         <td style="text-align:center">0 - 40</td>
         <td style="text-align:center">Watched Equal</td>
         <td style="text-align:center">
@@ -75,7 +75,7 @@
     </thead>
     <tbody>
         <tr>
-            <td rowspan="9" style="text-align:center"><b>BOTH</b></td>
+            <td rowspan="11" style="text-align:center"><b>BOTH</b></td>
             <td style="text-align:center">Guess Time</td>
             <td style="text-align:center">15</td>
             <td style="text-align:center">10</td>
@@ -83,16 +83,22 @@
         </tr>
         <tr>
             <td style="text-align:center">OP/DP Split</td>
-            <td rowspan="3" style="text-align:center">Yes</td>
+            <td rowspan="5" style="text-align:center">Yes</td>
             <td rowspan="3" style="text-align:center">No</td>
             <td style="text-align:center">No</td>
         </tr>
         <tr>
             <td style="text-align:center">DIFF</td>
+            <td rowspan="3" style="text-align:center">Yes</td>
+        </tr>
+        <tr><td style="text-align:center">ODIFF</td></tr>
+        <tr>
+            <td style="text-align:center">TDIFF</td>
             <td style="text-align:center">Yes</td>
         </tr>
         <tr>
             <td style="text-align:center">Rouge</td>
+            <td style="text-align:center">No</td>
             <td rowspan="5" style="text-align:center">No</td>
         </tr>
         <tr>
@@ -140,23 +146,22 @@
         <tr>
             <td style="text-align:center">Sudden Death</td>
             <td rowspan="2" style="text-align:center">Yes</td>
-            <td rowspan="4" style="text-align:center">No</td>
+            <td rowspan="3" style="text-align:center">No</td>
             <td rowspan="2" style="text-align:center">No</td>
         </tr>
         <tr><td style="text-align:center">Tie</td></tr>
         <tr>
-            <td style="text-align:center">Ghost Runner on 2nd</td>
-            <td rowspan="2" style="text-align:center">No</td>
-            <td rowspan="2" style="text-align:center">Yes</td>
+            <td style="text-align:center">Runner on 2nd, 1 Out</td>
+            <td style="text-align:center">No</td>
+            <td style="text-align:center">Yes</td>
         </tr>
-        <tr><td style="text-align:center">1 Out</td></tr>
     </tbody>
 </table>
 
-## Lineup: Away and Home, Captains
+## Lineup: Away And Home, Captains
 Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team on Slots 5-8). **Captains**' (Slots 1 and 5) correct guesses has a **+1 multiplier** for TDIFF calculations.
  
-## Score: Check the TDIFF
+## Score: Check The TDIFF
 <details>
     <summary><b>Click to know more about Scoring</b></summary>
     <p>The <b>Away</b> team attacks (has <b>possession</b>) first 
@@ -186,14 +191,13 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
     <tr>
         <td style="text-align:center"><code>Slam Dunk</code></td>
         <td style="text-align:center">≥5</td>
-        <td style="text-align:center">7</td>
+        <td rowspan="2"style="text-align:center">3</td>
         <td rowspan="5" style="text-align:center">N/A</td>
         <td style="text-align:center">Keep</td>
     </tr>
     <tr>
         <td style="text-align:center"><code>3-Pointer</code></td>
         <td style="text-align:center">4 or 3</td>
-        <td style="text-align:center">3</td>
         <td rowspan="7" style="text-align:center">Swap</td>
     </tr>
     <tr>
@@ -232,11 +236,11 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
 Each Quarter ends after a team reached **≥7** points 
 or after **6** songs, whichever happens first.
 If Regulation doesn't break the tie, 
-continue to 8-song **Overtime** (OT1).
-**Repeat** Overtime until a winner is found, 
-**alternating** first possession between Overtime Quarters.
+continue to 6-song **Overtime**.
+If necessary, **repeat** Overtime until a winner is found, 
+**alternating** first possession between Overtimes.
 
-## Format: Best-of-7, Round Robin, Knockouts
+## Format: Best-Of-7, Round Robin, Knockouts
 The script will automatically swap Away and Home teams between consecutive games.
 - **For 2 teams**: Play a best-of-7.
 - **For 4 teams**: Play a double round-robin. The top two teams advance to the **NBA Finals**.
@@ -262,12 +266,12 @@ Install the [Script](#links-balancer-flowchart-script) (**only** the lobby host 
 - Type `/nba start` and start playing.
     - If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.
     - If someone disconnected mid-game, the script will automatically pause the game for you. Wait for them to return and resume the game themselves.
-    - When the Winner has been decided either normally or through Elam Ending on the 4th Quarter, the game will automatically start the vote to return to lobby.
+    - When the Winner has been decided through Elam Ending on the 4th Quarter, the game will automatically start the vote to return to lobby.
 - If it's tied after Regulation:
     - Apply the **Overtime** setting code (see [Overview](#overview-those-long-setting-codes)).
     - Start playing after everyone is ready (**No need to type `/nba start` to start Overtime unless you reset**).
     - If you started Overtime by mistake, type `/nba resetOvertime`, return to lobby, then type `/nba start` to restart Overtime.
-    - When the Winner has been decided either normally, through Elam Ending, or if it's still tied after Overtime, the game will automatically start the vote to return to lobby.
+    - When the Winner has been decided through Elam Ending, the game will automatically start the vote to return to lobby.
     - If it's still tied after Overtime, repeat until a winner is found.
 - Type `/nba export` to download the **Scoresheet**.
 - Open the Scoresheet and copy the top row.

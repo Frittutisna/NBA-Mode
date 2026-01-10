@@ -187,7 +187,7 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
         <td style="text-align:center"><code>Slam Dunk</code></td>
         <td style="text-align:center">≥5</td>
         <td style="text-align:center">7</td>
-        <td rowspan="4" style="text-align:center">N/A</td>
+        <td rowspan="5" style="text-align:center">N/A</td>
         <td style="text-align:center">Keep</td>
     </tr>
     <tr>

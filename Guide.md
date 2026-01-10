@@ -68,24 +68,24 @@
         <tr>
             <th style="text-align:center">Phase</th>
             <th style="text-align:center">Differences</th>
-            <th style="text-align:center">NFL</th>
-            <th style="text-align:center">NBA</th>
             <th style="text-align:center">MLB</th>
+            <th style="text-align:center">NBA</th>
+            <th style="text-align:center">NFL</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td rowspan="11" style="text-align:center"><b>BOTH</b></td>
             <td style="text-align:center">Guess Time</td>
-            <td style="text-align:center">15</td>
-            <td style="text-align:center">10</td>
             <td style="text-align:center">20</td>
+            <td style="text-align:center">10</td>
+            <td style="text-align:center">15</td>
         </tr>
         <tr>
             <td style="text-align:center">OP/DP Split</td>
-            <td rowspan="5" style="text-align:center">Yes</td>
-            <td rowspan="3" style="text-align:center">No</td>
             <td style="text-align:center">No</td>
+            <td rowspan="3" style="text-align:center">No</td>
+            <td rowspan="5" style="text-align:center">Yes</td>
         </tr>
         <tr>
             <td style="text-align:center">DIFF</td>
@@ -98,62 +98,62 @@
         </tr>
         <tr>
             <td style="text-align:center">Rouge</td>
-            <td style="text-align:center">No</td>
             <td rowspan="5" style="text-align:center">No</td>
+            <td style="text-align:center">No</td>
         </tr>
         <tr>
             <td style="text-align:center">Hot Streak</td>
-            <td rowspan="5" style="text-align:center">No</td>
             <td rowspan="4" style="text-align:center">Yes</td>
+            <td rowspan="5" style="text-align:center">No</td>
         </tr>
         <tr><td style="text-align:center">Fast Break</td></tr>
         <tr><td style="text-align:center">Buzzer Beater</td></tr>
         <tr><td style="text-align:center">Elam Ending</td></tr>
         <tr>
             <td style="text-align:center">Base Running</td>
-            <td style="text-align:center">No</td>
             <td style="text-align:center">Yes</td>
+            <td style="text-align:center">No</td>
         </tr>
         <tr>
             <td rowspan="4" style="text-align:center"><b>REG</b></td>
             <td style="text-align:center">Song Count</td>
-            <td style="text-align:center">16</td>
-            <td style="text-align:center">24</td>
             <td style="text-align:center">32</td>
+            <td style="text-align:center">24</td>
+            <td style="text-align:center">16</td>
         </tr>
         <tr>
             <td style="text-align:center">Song Mix</td>
-            <td colspan="2" style="text-align:center">Watched Equal</td>
             <td style="text-align:center">Random</td>
+            <td colspan="2" style="text-align:center">Watched Equal</td>
         </tr>
         <tr>
             <td style="text-align:center">Song Difficulty</td>
-            <td colspan="2" style="text-align:center">0-40</td>
             <td style="text-align:center">0-100</td>
+            <td colspan="2" style="text-align:center">0-40</td>
         </tr>
         <tr>
             <td style="text-align:center">Mercy Rule</td>
-            <td style="text-align:center">Yes</td>
             <td colspan="2" style="text-align:center">No</td>
+            <td style="text-align:center">Yes</td>
         </tr>
         <tr>
             <td rowspan="5" style="text-align:center"><b>OT</b></td>
             <td style="text-align:center">Song Count</td>
-            <td style="text-align:center">4</td>
-            <td style="text-align:center">6</td>
             <td style="text-align:center">8</td>
+            <td style="text-align:center">6</td>
+            <td style="text-align:center">4</td>
         </tr>
         <tr>
             <td style="text-align:center">Sudden Death</td>
-            <td rowspan="2" style="text-align:center">Yes</td>
-            <td rowspan="3" style="text-align:center">No</td>
             <td rowspan="2" style="text-align:center">No</td>
+            <td rowspan="3" style="text-align:center">No</td>
+            <td rowspan="2" style="text-align:center">Yes</td>
         </tr>
         <tr><td style="text-align:center">Tie</td></tr>
         <tr>
             <td style="text-align:center">Runner on 2nd, 1 Out</td>
-            <td style="text-align:center">No</td>
             <td style="text-align:center">Yes</td>
+            <td style="text-align:center">No</td>
         </tr>
     </tbody>
 </table>

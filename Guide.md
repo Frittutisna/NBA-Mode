@@ -37,28 +37,20 @@
     </tr>
     <tr>
         <td style="text-align:center">Regulation</td>
-        <td style="text-align:center">24</td>
+        <td style="text-align:center">12-24</td>
         <td rowspan="2" style="text-align:center">10</td>
-        <td style="text-align:center">0 - 40</td>
-        <td style="text-align:center">Watched Equal</td>
-        <td style="text-align:center">
+        <td rowspan="2" style="text-align:center">0 - 40</td>
+        <td rowspan="2" style="text-align:center">Watched Equal</td>
+        <td rowspan="2" style="text-align:center">
             <details>
                 <summary>Click to view code</summary>
-                <code style="word-break: break-all">e0g0o21111100130o000031110000000o11111111111100a051o000000f11100k012r02i0a46533a11002s011111111100140111002s01a111111111102a11111111111hg1ka03-11111--</code>
+                <code style="word-break: break-all">e0g0u21111100130u000031110000000u11111111111100a051o000000f11100k012r02i0a46533a11002s011111111100140111002s01a111111111102a11111111111hg1ka03-11111--</code>
             </details>
         </td>
     </tr>
     <tr>
         <td style="text-align:center">Overtime</td>
-        <td style="text-align:center">6</td>
-        <td style="text-align:center">0 - 100</td>
-        <td style="text-align:center">Random</td>
-        <td style="text-align:center">
-            <details>
-                <summary>Click to view code</summary>
-                <code style="word-break: break-all;">e0g06211111001100000631110000000611111111111100a051o000000f11100k012r02i0a46533a11002s0111111111002s0111002s01a111111111102a11111111111hg1ka03-11111--</code>
-            </details>
-        </td>
+        <td style="text-align:center">3-6</td>
     </tr>
 </table>
 
@@ -118,8 +110,8 @@
             <td rowspan="4" style="text-align:center"><b>REG</b></td>
             <td style="text-align:center">Song Count</td>
             <td style="text-align:center">32</td>
-            <td style="text-align:center">24</td>
-            <td style="text-align:center">16</td>
+            <td style="text-align:center">12-24</td>
+            <td style="text-align:center">9-16</td>
         </tr>
         <tr>
             <td style="text-align:center">Song Mix</td>
@@ -137,23 +129,34 @@
             <td style="text-align:center">Yes</td>
         </tr>
         <tr>
-            <td rowspan="5" style="text-align:center"><b>OT</b></td>
+            <td rowspan="6" style="text-align:center"><b>OT</b></td>
             <td style="text-align:center">Song Count</td>
             <td style="text-align:center">8</td>
-            <td style="text-align:center">6</td>
-            <td style="text-align:center">4</td>
+            <td style="text-align:center">3-6</td>
+            <td style="text-align:center">1-4</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">Song Mix</td>
+            <td style="text-align:center">Random</td>
+            <td style="text-align:center">Watched Equal</td>
+            <td style="text-align:center">Random</td>
         </tr>
         <tr>
             <td style="text-align:center">Sudden Death</td>
             <td rowspan="2" style="text-align:center">No</td>
-            <td rowspan="3" style="text-align:center">No</td>
+            <td rowspan="2" style="text-align:center">No</td>
             <td rowspan="2" style="text-align:center">Yes</td>
         </tr>
         <tr><td style="text-align:center">Tie</td></tr>
         <tr>
+            <td style="text-align:center">Last Tiebreaker</td>
+            <td colspan="2" style="text-align:center">Home</td>
+            <td style="text-align:center">Away</td>
+        </tr>
+        <tr>
             <td style="text-align:center">Runner on 2nd, 1 Out</td>
             <td style="text-align:center">Yes</td>
-            <td style="text-align:center">No</td>
+            <td colspan="2" style="text-align:center">No</td>
         </tr>
     </tbody>
 </table>
@@ -177,7 +180,7 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
     <b>+1</b> for their team's TDIFF calculations. 
     To calculate points, subtract the Defending team’s score 
     from the Attacking team’s score. 
-    Points are doubled for the <b>last</b> song of each Quarter. 
+    Each Result is worth <b>+1</b> point for the <b>last</b> song of each Quarter. 
 </details>
 
 <table style="text-align:center">
@@ -237,8 +240,14 @@ Each Quarter ends after a team reached **≥7** points
 or after **6** songs, whichever happens first.
 If Regulation doesn't break the tie, 
 continue to 6-song **Overtime**.
-If necessary, **repeat** Overtime until a winner is found, 
-**alternating** first possession between Overtimes.
+If Overtime doesn’t resolve the tie, 
+consult the following tiebreakers 
+(Tiebreakers 1-4 are determined solely from Overtime results):
+1. Weighted Total Correct (counting Captains twice)
+2. Captains
+3. Non-Captain OP/DP-1s (if the Captains were 17, look for 35)
+4. Cross OP/DP-2s (if 17 then 46)
+5. Home Team (to account for the Away team's first possession in Overtime)
 
 ## Format: Best-Of-7, Round Robin, Knockouts
 The script will automatically swap Away and Home teams between consecutive games.
@@ -266,14 +275,7 @@ Install the [Script](#links-balancer-flowchart-script) (**only** the lobby host 
 - Type `/nba start` and start playing.
     - If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.
     - If someone disconnected mid-game, the script will automatically pause the game for you. Wait for them to return and resume the game themselves.
-    - When the Winner has been decided through Elam Ending on the 4th Quarter, the game will automatically start the vote to return to lobby.
-- If it's tied after Regulation:
-    - Apply the **Overtime** setting code (see [Overview](#overview-those-long-setting-codes)).
-    - Start playing after everyone is ready (**No need to type `/nba start` to start Overtime unless you reset**).
-    - If you started Overtime by mistake, type `/nba resetOvertime`, return to lobby, then type `/nba start` to restart Overtime.
-    - When the Winner has been decided through Elam Ending, the game will automatically start the vote to return to lobby.
-    - If it's still tied after Overtime, repeat until a winner is found.
-- Type `/nba export` to download the **Scoresheet**.
-- Open the Scoresheet and copy the top row.
-- Paste it in `#game-reporting` with the Scoresheet and JSON(s) (Regulation and Overtime(s) if necessary).
+    - When the Winner has been decided through Elam Ending on the 4th Quarter or on Overtime, the game will automatically start the vote to return to lobby.
+- Type `/nfl export` to download the **Scoresheet**, open it on your browser, and copy the top row.
+- Paste it in `#game-reporting` with the Scoresheet and JSON
 - Repeat from Step 1 for the next game.

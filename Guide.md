@@ -239,6 +239,7 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
 Each Quarter ends after a team reached **≥7** points 
 or after **6** songs, whichever happens first.
 If Regulation doesn't break the tie, 
+the script will automatically 
 continue to 6-song **Overtime**.
 If Overtime doesn’t resolve the tie, 
 consult the following tiebreakers 
@@ -274,8 +275,7 @@ Install the [Script](#links-balancer-flowchart-script) (**only** the lobby host 
 - After everyone is ready, type `/nba howTo` and follow the instructions there.
 - Type `/nba start` and start playing.
     - If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.
-    - If someone disconnected mid-game, the script will automatically pause the game for you. Wait for them to return and resume the game themselves.
     - When the Winner has been decided through Elam Ending on the 4th Quarter or on Overtime, the game will automatically start the vote to return to lobby.
 - Type `/nfl export` to download the **Scoresheet**, open it on your browser, and copy the top row.
-- Paste it in `#game-reporting` with the Scoresheet and JSON
+- Paste it in `#game-reporting` with the Scoresheet and JSON.
 - Repeat from Step 1 for the next game.

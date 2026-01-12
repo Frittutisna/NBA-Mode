@@ -1,7 +1,7 @@
 # NBA Mode v0.alpha.0
 
 ## Table of Contents
-- [TLDR: What Do I Do?](#tldr-what-do-i-do)
+- [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
 - [Links: Balancer, Flowchart, Script](#links-balancer-flowchart-script)
 - [Overview: Those Long Setting Codes](#overview-those-long-setting-codes)
 - [Comparison: What's The Difference?](#comparison-whats-the-difference)
@@ -11,7 +11,8 @@
 - [Format: Best-Of-7, Round Robin, Knockouts](#format-best-of-7-round-robin-knockouts)
 - [Manual: What Do I *Really* Do?](#manual-what-do-i-really-do)
 
-## TLDR: What Do I Do?
+## TLDR: What Is This And What Do I Do?
+In very simple terms: *just answer as correctly and as quickly as you can*
 - If you're **just playing**: Join the right lobby, line up correctly, and click Ready. If you're confused about anything, you can (in order of priority):
     - Just play along. People often say this is a game mode best understood through playing, not reading
     - Try `/nba help` or `/nba whatIs` in the chat, or

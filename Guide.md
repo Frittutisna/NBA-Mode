@@ -21,7 +21,7 @@
 - If you're **hosting the tour** or **hosting a lobby** for your team, see [Manual: What Do I *Really* Do?](#manual-what-do-i-really-do).
 
 ## Links: Balancer, Flowchart, Script
-- [Link to the Balancer](https://github.com/Frittutisna/NFL-Mode/blob/main/Balancer/Balancer.py)
+- [Link to the Balancer](https://github.com/Frittutisna/Balancer)
 - [Link to the Flowchart](https://github.com/Frittutisna/NBA-Mode/blob/main/Flowchart/Flowchart.pdf)
 - [Link to the Script](https://github.com/Frittutisna/NBA-Mode/blob/main/Script.js)
 

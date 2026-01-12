@@ -40,11 +40,11 @@
         <td style="text-align:center">12-24</td>
         <td rowspan="2" style="text-align:center">10</td>
         <td rowspan="2" style="text-align:center">0 - 40</td>
-        <td rowspan="2" style="text-align:center">Watched Equal</td>
+        <td rowspan="2" style="text-align:center">Watched Random</td>
         <td rowspan="2" style="text-align:center">
             <details>
                 <summary>Click to view code</summary>
-                <code style="word-break: break-all">e0g0u21111100130u000031110000000u11111111111100a051o000000f11100k012r02i0a46533a11002s011111111100140111002s01a111111111102a11111111111hg1ka03-11111--</code>
+                <code style="word-break: break-all">e0g0u21111100130u000011110000000u11111111111100a051o000000f11100k012r02i0a46533a11002s011111111100140111002s01a111111111102a11111111111hg1ka03-11111--</code>
             </details>
         </td>
     </tr>
@@ -116,7 +116,7 @@
         <tr>
             <td style="text-align:center">Song Mix</td>
             <td style="text-align:center">Random</td>
-            <td colspan="2" style="text-align:center">Watched Equal</td>
+            <td colspan="2" style="text-align:center">Watched <strong>Random</strong></td>
         </tr>
         <tr>
             <td style="text-align:center">Song Difficulty</td>
@@ -138,7 +138,7 @@
         <tr>
             <td style="text-align:center">Song Mix</td>
             <td style="text-align:center">Random</td>
-            <td style="text-align:center">Watched Equal</td>
+            <td style="text-align:center">Watched <strong>Random</strong></td>
             <td style="text-align:center">Random</td>
         </tr>
         <tr>

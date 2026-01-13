@@ -12,7 +12,7 @@
 - [Manual: What Do I *Really* Do?](#manual-what-do-i-really-do)
 
 ## TLDR: What Is This And What Do I Do?
-In very simple terms: *just answer as correctly and as quickly as you can*
+In very simple terms: *just answer as correctly and as quickly as you can*.
 - If you're **just playing**: Join the right lobby, line up correctly, and click Ready. If you're confused about anything, you can (in order of priority):
     - Just play along. People often say this is a game mode best understood through playing, not reading
     - Try `/nba help` or `/nba whatIs` in the chat, or
@@ -108,7 +108,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*
             <td style="text-align:center">No</td>
         </tr>
         <tr>
-            <td rowspan="4" style="text-align:center"><b>REG</b></td>
+            <td rowspan="5" style="text-align:center"><b>REG</b></td>
             <td style="text-align:center">Song Count</td>
             <td style="text-align:center">32</td>
             <td style="text-align:center">12-24</td>
@@ -128,6 +128,11 @@ In very simple terms: *just answer as correctly and as quickly as you can*
             <td style="text-align:center">Mercy Rule</td>
             <td colspan="2" style="text-align:center">No</td>
             <td style="text-align:center">Yes</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">Base Stealing</td>
+            <td style="text-align:center">Yes</td>
+            <td colspan="2" style="text-align:center">No</td>
         </tr>
         <tr>
             <td rowspan="6" style="text-align:center"><b>OT</b></td>

@@ -7,7 +7,7 @@
 - [Comparison: What's The Difference?](#comparison-whats-the-difference)
 - [Lineup: Away And Home, Captains](#lineup-away-and-home-captains)
 - [Score: Check The TDIFF](#score-check-the-tdiff)
-- [Ending: Elam, Overtime](#ending-elam-overtime)
+- [Ending: Elam, Tiebreaker](#ending-elam-tiebreaker)
 - [Format: Best-Of-7, Round Robin, Knockouts](#format-best-of-7-round-robin-knockouts)
 - [Manual: What Do I *Really* Do?](#manual-what-do-i-really-do)
 
@@ -30,6 +30,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*.
 <table style="text-align:center">
     <tr>
         <th style="text-align:center"><strong>Phase</strong></th>
+        <th style="text-align:center"><strong>Estimated Runtime</strong></th>
         <th style="text-align:center"><strong>Song Count</strong></th>
         <th style="text-align:center"><strong>Guess Time</strong></th>
         <th style="text-align:center"><strong>Difficulty</strong></th>
@@ -38,20 +39,17 @@ In very simple terms: *just answer as correctly and as quickly as you can*.
     </tr>
     <tr>
         <td style="text-align:center">Regulation</td>
-        <td style="text-align:center">12-24</td>
-        <td rowspan="2" style="text-align:center">10</td>
-        <td rowspan="2" style="text-align:center">0 - 40</td>
-        <td rowspan="2" style="text-align:center">Watched Random</td>
-        <td rowspan="2" style="text-align:center">
+        <td style="text-align:center">1.5 hours</td>
+        <td style="text-align:center">16-40</td>
+        <td style="text-align:center">10</td>
+        <td style="text-align:center">0-40</td>
+        <td style="text-align:center">Watched with Random Rig Distribution</td>
+        <td style="text-align:center">
             <details>
                 <summary>Click to view code</summary>
-                <code style="word-break: break-all">e0g0u21111100130u000011110000000u11111111111100a051o000000f11100k012r02i0a46533a11002s011111111100140111002s01a111111111102a11111111111hg1ka03-11111--</code>
+                <code style="word-break: break-all">e0g14211111001314000011110000001411111111111100a051o000000f11100k012r02i0a46533a11002s011111111100140111002s01a111111111102a11111111111hg1ka03-11111--</code>
             </details>
         </td>
-    </tr>
-    <tr>
-        <td style="text-align:center">Overtime</td>
-        <td style="text-align:center">3-6</td>
     </tr>
 </table>
 
@@ -59,116 +57,100 @@ In very simple terms: *just answer as correctly and as quickly as you can*.
 <table>
     <thead>
         <tr>
-            <th style="text-align:center">Phase</th>
-            <th style="text-align:center">Differences</th>
-            <th style="text-align:center">MLB</th>
-            <th style="text-align:center">NBA</th>
-            <th style="text-align:center">NFL</th>
+            <th style="text-align:center" rowspan="2">Differences</th>
+            <th style="text-align:center" rowspan="2">MLB</th>
+            <th style="text-align:center" rowspan="2">NBA</th>
+            <th style="text-align:center" colspan="2">NFL</th>
+        </tr>
+        <tr>
+            <th style="text-align:center">Regulation</th>
+            <th style="text-align:center">Overtime</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td rowspan="11" style="text-align:center"><b>BOTH</b></td>
+            <td style="text-align:center">Estimated Runtime</td>
+            <td style="text-align:center">2 hours</td>
+            <td style="text-align:center">1.5 hours</td>
+            <td style="text-align:center" colspan="2">1 hour</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">Song Count</td>
+            <td style="text-align:center">25</td>
+            <td style="text-align:center">16-40</td>
+            <td style="text-align:center">9-16</td>
+            <td style="text-align:center">0-4</td>
+        </tr>
+        <tr>
             <td style="text-align:center">Guess Time</td>
             <td style="text-align:center">20</td>
             <td style="text-align:center">10</td>
-            <td style="text-align:center">15</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">OP/DP Split</td>
-            <td style="text-align:center">No</td>
-            <td rowspan="3" style="text-align:center">No</td>
-            <td rowspan="5" style="text-align:center">Yes</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">DIFF</td>
-            <td rowspan="3" style="text-align:center">Yes</td>
-        </tr>
-        <tr><td style="text-align:center">ODIFF</td></tr>
-        <tr>
-            <td style="text-align:center">TDIFF</td>
-            <td style="text-align:center">Yes</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">Rouge</td>
-            <td rowspan="5" style="text-align:center">No</td>
-            <td style="text-align:center">No</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">Hot Streak</td>
-            <td rowspan="4" style="text-align:center">Yes</td>
-            <td rowspan="5" style="text-align:center">No</td>
-        </tr>
-        <tr><td style="text-align:center">Fast Break</td></tr>
-        <tr><td style="text-align:center">Buzzer Beater</td></tr>
-        <tr><td style="text-align:center">Elam Ending</td></tr>
-        <tr>
-            <td style="text-align:center">Base Running</td>
-            <td style="text-align:center">Yes</td>
-            <td style="text-align:center">No</td>
-        </tr>
-        <tr>
-            <td rowspan="5" style="text-align:center"><b>REG</b></td>
-            <td style="text-align:center">Song Count</td>
-            <td style="text-align:center">32</td>
-            <td style="text-align:center">12-24</td>
-            <td style="text-align:center">9-16</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">Song Mix</td>
-            <td style="text-align:center">Random</td>
-            <td colspan="2" style="text-align:center">Watched <strong>Random</strong></td>
+            <td style="text-align:center" colspan="2">15</td>
         </tr>
         <tr>
             <td style="text-align:center">Song Difficulty</td>
             <td style="text-align:center">0-100</td>
-            <td colspan="2" style="text-align:center">0-40</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">Mercy Rule</td>
-            <td colspan="2" style="text-align:center">No</td>
-            <td style="text-align:center">Yes</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">Base Stealing</td>
-            <td style="text-align:center">Yes</td>
-            <td colspan="2" style="text-align:center">No</td>
-        </tr>
-        <tr>
-            <td rowspan="6" style="text-align:center"><b>OT</b></td>
-            <td style="text-align:center">Song Count</td>
-            <td style="text-align:center">8</td>
-            <td style="text-align:center">3-6</td>
-            <td style="text-align:center">1-4</td>
+            <td style="text-align:center" colspan="2">0-40</td>
+            <td style="text-align:center">0-100</td>
         </tr>
         <tr>
             <td style="text-align:center">Song Mix</td>
             <td style="text-align:center">Random</td>
-            <td style="text-align:center">Watched <strong>Random</strong></td>
+            <td style="text-align:center" colspan="2" >Watched with <strong>Random</strong> Rig Distribution</td>
             <td style="text-align:center">Random</td>
         </tr>
         <tr>
-            <td style="text-align:center">Sudden Death</td>
-            <td rowspan="2" style="text-align:center">No</td>
-            <td rowspan="2" style="text-align:center">No</td>
-            <td rowspan="2" style="text-align:center">Yes</td>
+            <td style="text-align:center">DIFF</td>
+            <td style="text-align:center" rowspan="4">Yes</td>
+            <td style="text-align:center" rowspan="4">No</td>
+            <td style="text-align:center" colspan="2">Yes</td>
         </tr>
-        <tr><td style="text-align:center">Tie</td></tr>
+        <tr>
+            <td style="text-align:center">ODIFF</td>
+            <td style="text-align:center" colspan="2" rowspan="7">No</td>
+        </tr>
+        <tr><td style="text-align:center">Base Running</td></tr>
+        <tr><td style="text-align:center">Base Stealing</td></tr>
+        <tr>
+            <td style="text-align:center">Hot Streak</td>
+            <td style="text-align:center" rowspan="4">No</td>
+            <td style="text-align:center" rowspan="4">Yes</td>
+        </tr>
+        <tr><td style="text-align:center">Fast Break</td></tr>
+        <tr><td style="text-align:center">Elam Ending</td></tr>
+        <tr><td style="text-align:center">Buzzer Beater</td></tr>
+        <tr>
+            <td style="text-align:center">OP/DP Split</td>
+            <td style="text-align:center" colspan="2" rowspan="5">No</td>
+            <td style="text-align:center" colspan="2" rowspan="2">Yes</td>
+        </tr>
+        <tr><td style="text-align:center">Rouge</td></tr>
+        <tr>
+            <td style="text-align:center">Mercy Rule</td>
+            <td style="text-align:center">Yes</td>
+            <td style="text-align:center">No</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">Sudden Death</td>
+            <td style="text-align:center">No</td>
+            <td style="text-align:center" rowspan="2">Yes</td>
+        </tr>
+        <tr>
+            <td style="text-align:center">Tie</td>
+            <td style="text-align:center" rowspan="2">N/A</td>
+        </tr>
         <tr>
             <td style="text-align:center">Last Tiebreaker</td>
-            <td colspan="2" style="text-align:center">Home</td>
+            <td style="text-align:center">Home</td>
             <td style="text-align:center">Away</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">Runner on 2nd, 1 Out</td>
-            <td style="text-align:center">Yes</td>
-            <td colspan="2" style="text-align:center">No</td>
+            <td style="text-align:center">Away</td>
         </tr>
     </tbody>
 </table>
 
 ## Lineup: Away And Home, Captains
-Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team on Slots 5-8). **Captains**' (Slots 1 and 5) correct guesses has a **+1 multiplier** for TDIFF calculations.
+Teams line up in **Watched** Elo order (Away team on Slots 1-4, then Home team on Slots 5-8). 
+**Captains**' (Slots 1 and 5) correct guesses has a **+1 multiplier** for TDIFF calculations.
  
 ## Score: Check The TDIFF
 <details>
@@ -186,7 +168,8 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
     <b>+1</b> for their team's TDIFF calculations. 
     To calculate points, subtract the Defending team’s score 
     from the Attacking team’s score. 
-    Each Result is worth <b>+1</b> point for the <b>last</b> song of each Quarter. 
+    Point-scoring plays are worth <b>+1</b> point 
+    in Song <b>10</b> of each Quarter. 
 </details>
 
 <table style="text-align:center">
@@ -200,14 +183,14 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
     <tr>
         <td style="text-align:center"><code>Slam Dunk</code></td>
         <td style="text-align:center">≥5</td>
-        <td rowspan="2"style="text-align:center">3</td>
-        <td rowspan="5" style="text-align:center">N/A</td>
+        <td style="text-align:center" rowspan="2">3</td>
+        <td style="text-align:center" rowspan="4">N/A</td>
         <td style="text-align:center">Keep</td>
     </tr>
     <tr>
         <td style="text-align:center"><code>3-Pointer</code></td>
         <td style="text-align:center">4 or 3</td>
-        <td rowspan="7" style="text-align:center">Swap</td>
+        <td style="text-align:center" rowspan="7">Swap</td>
     </tr>
     <tr>
         <td style="text-align:center"><code>2-Pointer</code></td>
@@ -222,11 +205,12 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
     <tr>
         <td style="text-align:center"><code>Rebound</code></td>
         <td style="text-align:center">-1</td>
-        <td rowspan="4" style="text-align:center">N/A</td>
+        <td style="text-align:center" colspan="2">N/A</td>
     </tr>
     <tr>
         <td style="text-align:center"><code>Turnover</code></td>
         <td style="text-align:center">-2</td>
+        <td style="text-align:center" rowspan="3">N/A</td>
         <td style="text-align:center">1</td>
     </tr>
     <tr>
@@ -241,20 +225,16 @@ Teams line up in **Watched Elo** order (Away team on Slots 1-4, then Home team o
     </tr>
 </table>
 
-## Ending: Elam, Overtime
-Each Quarter ends after a team reached **≥7** points 
-or after **6** songs, whichever happens first.
+## Ending: Elam, Tiebreaker
+Each Quarter ends after a team reached **≥10** points 
+or after **10** songs, whichever happens first.
 If Regulation doesn't break the tie, 
-the script will automatically 
-continue to 6-song **Overtime**.
-If Overtime doesn’t resolve the tie, 
-consult the following tiebreakers 
-(Tiebreakers 1-4 are determined solely from Overtime results):
+consult the following tiebreakers:
 1. Weighted Total Correct (counting Captains twice)
 2. Captains
 3. Non-Captain OP/DP-1s (if the Captains were 17, look for 35)
 4. Cross OP/DP-2s (if 17 then 46)
-5. Home Team (to account for the Away team's first possession in Overtime)
+5. Home Team (to account for the Away team's first possession)
 
 ## Format: Best-Of-7, Round Robin, Knockouts
 The script will automatically swap Away and Home teams between consecutive games.
@@ -281,7 +261,7 @@ Install the [Script](#links-balancer-flowchart-script) (**only** the lobby host 
 - After everyone is ready, type `/nba howTo` and follow the instructions there.
 - Type `/nba start` and start playing.
     - If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.
-    - When the Winner has been decided through Elam Ending on the 4th Quarter or on Overtime, the game will automatically start the vote to return to lobby.
+    - When the Winner has been decided, the game will automatically start the vote to return to lobby.
 - Type `/nfl export` to download the **Scoresheet**, open it on your browser, and copy the top row.
 - Paste it in `#game-reporting` with the Scoresheet and JSON.
 - Repeat from Step 1 for the next game.

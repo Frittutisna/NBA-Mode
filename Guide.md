@@ -12,7 +12,7 @@
 - [Manual: What Do I *Really* Do?](#manual-what-do-i-really-do)
 
 ## TLDR: What Is This And What Do I Do?
-In very simple terms: *just answer as correctly and as quickly as you can*.
+In very simple terms: *just answer as correctly and as quickly as you can*
 - If you're **just playing**: Join the right lobby, line up correctly, and click Ready. If you're confused about anything, you can (in order of priority):
     - Just play along. People often say this is a game mode best understood through playing, not reading
     - Try `/nba help` or `/nba whatIs` in the chat, or
@@ -231,9 +231,9 @@ or after **10** songs, whichever happens first.
 If Regulation doesn't break the tie, 
 consult the following tiebreakers:
 1. Weighted Total Correct (counting Captains twice)
-2. Captains
-3. Non-Captain OP/DP-1s (if the Captains were 17, look for 35)
-4. Cross OP/DP-2s (if 17 then 46)
+2. Captains (Slots 1 vs 5)
+3. T2s (Slots 2 vs 6)
+4. T3s (Slots 3 vs 7)
 5. Home Team (to account for the Away team's first possession)
 
 ## Format: Best-Of-7, Round Robin, Knockouts
@@ -259,9 +259,7 @@ Install the [Script](#links-balancer-flowchart-script) (**only** the lobby host 
 - Apply the **Regulation** setting code (see [Overview](#overview-those-long-setting-codes)).
 - Invite the right players to the lobby, and make sure they're lined up correctly (see [Lineup](#lineup-away-and-home-captains)).
 - After everyone is ready, type `/nba howTo` and follow the instructions there.
-- Type `/nba start` and start playing.
-    - If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.
-    - When the Winner has been decided, the game will automatically start the vote to return to lobby.
-- Type `/nfl export` to download the **Scoresheet**, open it on your browser, and copy the top row.
+- Type `/nba start` and start playing. If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.
+- The Script will automatically download the **Scoresheet** after each Game. Open it on your browser and copy the top row.
 - Paste it in `#game-reporting` with the Scoresheet and JSON.
-- Repeat from Step 1 for the next game.
+- Repeat from Step 1 for a new lobby, from Step 2 for the same lobby and a new opponent, or from Step 3 for the same lobby and opponent.

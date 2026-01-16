@@ -257,9 +257,7 @@ The script will automatically swap Away and Home teams between consecutive games
 ### If you're hosting a lobby for your team:
 Install the [Script](#links-balancer-flowchart-script) (**only** the lobby host needs to install and operate the **Script**) on your browser through TamperMonkey, then do the following:
 - Apply the **Regulation** setting code (see [Overview](#overview-those-long-setting-codes)).
-- Invite the right players to the lobby, and make sure they're lined up correctly (see [Lineup](#lineup-away-and-home-captains)).
-- After everyone is ready, type `/nba howTo` and follow the instructions there.
-- Type `/nba start` and start playing. If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.
-- The Script will automatically download the **Scoresheet** after each Game. Open it on your browser and copy the top row.
-- Paste it in `#game-reporting` with the Scoresheet and JSON.
+- Invite the right players to the lobby, make sure they're lined up correctly (see [Lineup](#lineup-away-and-home-captains)), then type `/nba howTo` and follow the instructions there.
+- After everyone is ready, type `/nba start` and start playing. If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.
+- The Script will automatically download the **Scoresheet** after each Game. Open it on your browser, copy the top row, then paste it in `#game-reporting` with the Scoresheet and JSON.
 - Repeat from Step 1 for a new lobby, from Step 2 for the same lobby and a new opponent, or from Step 3 for the same lobby and opponent.

@@ -76,10 +76,10 @@ In very simple terms: *just answer as correctly and as quickly as you can*
         </tr>
         <tr>
             <td style="text-align:center">Song Count</td>
-            <td style="text-align:center">25</td>
+            <td style="text-align:center">30</td>
             <td style="text-align:center">16-40</td>
-            <td style="text-align:center">9-16</td>
-            <td style="text-align:center">0-4</td>
+            <td style="text-align:center">11-20</td>
+            <td style="text-align:center">0-5</td>
         </tr>
         <tr>
             <td style="text-align:center">Guess Time</td>
@@ -132,25 +132,15 @@ In very simple terms: *just answer as correctly and as quickly as you can*
         </tr>
         <tr>
             <td style="text-align:center">Sudden Death</td>
-            <td style="text-align:center">No</td>
+            <td style="text-align:center" rowspan="2">No</td>
             <td style="text-align:center" rowspan="2">Yes</td>
         </tr>
-        <tr>
-            <td style="text-align:center">Tie</td>
-            <td style="text-align:center" rowspan="2">N/A</td>
-        </tr>
-        <tr>
-            <td style="text-align:center">Last Tiebreaker</td>
-            <td style="text-align:center">Home</td>
-            <td style="text-align:center">Away</td>
-            <td style="text-align:center">Away</td>
-        </tr>
+        <tr><td style="text-align:center">Tie</td></tr>
     </tbody>
 </table>
 
 ## Lineup: Away And Home, Captains
-Teams line up in **Watched** Elo order (Away team on Slots 1-4, then Home team on Slots 5-8). 
-**Captains**' (Slots 1 and 5) correct guesses has a **+1 multiplier** for TDIFF calculations.
+The team listed first (above) on Challonge is the **Away** team for each series. Line up as follows before each series: **Away** (Slots 1-4: T1, T2, T3, T4), then **Home** (Slots 5-8: T1, T2, T3, T4). The T1 of each team is also designated as their **Captain**, which carries a **+1 multiplier** for their correct guesses. There is **no need to swap** Slots between consecutive games; the Script does that **automatically**. 
  
 ## Score: Check The TDIFF
 <details>
@@ -230,11 +220,11 @@ Each Quarter ends after a team reached **≥10** points
 or after **10** songs, whichever happens first.
 If Regulation doesn't break the tie, 
 consult the following tiebreakers:
-1. Weighted Total Correct (counting Captains twice)
+1. Weighted Total (counting Captains twice)
 2. Captains (Slots 1 vs 5)
 3. T2s (Slots 2 vs 6)
 4. T3s (Slots 3 vs 7)
-5. Home Team (to account for the Away team's first possession)
+5. Possession (the team **without** possession for the last Song)
 
 ## Format: Best-Of-7, Round Robin, Knockouts
 The script will automatically swap Away and Home teams between consecutive games.
@@ -249,7 +239,7 @@ The script will automatically swap Away and Home teams between consecutive games
 - After the player list has been settled, find the [Balancer](#links-balancer-flowchart-script) and follow the instructions there.
 - If the tour has ≥4 teams, ask for 1 lobby host volunteer from each team.
 - Read the [Format](#format-best-of-7-round-robin-knockouts) section and prepare the Challonge.
-- Announce team compositions and the Challonge link.
+- Announce team compositions, as well as Challonge and lobby links.
 - Note the results of each game in Challonge.
 - If necessary, ping teams that advance to the **Conference Finals** and/or **NBA Finals**.
 - Announce the final results.

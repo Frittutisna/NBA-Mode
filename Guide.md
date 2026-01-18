@@ -224,7 +224,7 @@ consult the following tiebreakers:
 2. Captains (Slots 1 vs 5)
 3. T2s (Slots 2 vs 6)
 4. T3s (Slots 3 vs 7)
-5. Possession (the team **without** possession for the last Song)
+5. Possession (the **Defending** Team for the Last Song)
 
 ## Format: Best-Of-7, Round Robin, Knockouts
 The script will automatically swap Away and Home teams between consecutive games.

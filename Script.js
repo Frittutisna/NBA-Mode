@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0.alpha.1
+// @version      0.alpha.2
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -82,7 +82,7 @@
         "block"             : "TDIFF -3 or -4. Defending Team gets 2 points. Possession swaps.",
         "steal"             : "TDIFF ≤ -5. Defending Team gets 3 points. Possession swaps.",
         "buzzer beater"     : "On Song 10 of a Quarter, all scoring plays (except Rebound) are worth +1 point.",
-        "elam ending"       : "Quarter ends if a team scores ≥10 NEW points in the quarter, or after 10 songs.",
+        "elam ending"       : `Quarter ends if a team scores ≥${config.targetScore} NEW points in the quarter, or after ${config.quarterMaxSongs} songs.`,
     };
 
     const COMMAND_DESCRIPTIONS = {
@@ -128,6 +128,13 @@
         let actualSide = side;
         if (config.isSwapped) actualSide = (side === 'away' ? 'home' : 'away');
         return getArrowedName(actualSide);
+    };
+
+    // New helper for messages without arrows
+    const getTeamName = (side) => {
+        let actualSide = side;
+        if (config.isSwapped) actualSide = (side === 'away' ? 'home' : 'away');
+        return config.teamNames[actualSide];
     };
 
     const getPlayerNameAtTeamId = (teamId) => {
@@ -265,6 +272,67 @@
         systemMessage("Full reset complete: settings, teams, and series history wiped");
     };
 
+    const resolveTie = (awaySlots, homeSlots, silent = false) => {
+        // Tiebreakers: 1. Weighted Correct (Q4), 2. Captains (Q4), 3. T2s (Q4), 4. T3s (Q4), 5. Defending (Last Song)
+        const q4History = match.history.filter(r => r.q === 4);
+
+        const getStat = (side, targetIndices) => {
+            let total = 0;
+            const slots = side === 'away' ? awaySlots : homeSlots;
+            q4History.forEach(row => {
+                const arr = side === 'away' ? row.awayArr : row.homeArr;
+                targetIndices.forEach(idx => {
+                    if (arr[idx] === 1) {
+                        const slotId = slots[idx];
+                        const isCaptain = config.captains.includes(slotId);
+                        total += (isCaptain ? 2 : 1);
+                    }
+                });
+            });
+            return total;
+        };
+
+        const msg = (txt) => { if (!silent) chatMessage(txt); };
+
+        // 1. Weighted Total (All slots)
+        const awayWeighted = getStat('away', [0, 1, 2, 3]);
+        const homeWeighted = getStat('home', [0, 1, 2, 3]);
+        if (awayWeighted !== homeWeighted) {
+            msg(`Tiebreaker: ${getTeamDisplayName(awayWeighted > homeWeighted ? 'away' : 'home')} wins on Weighted Total (${awayWeighted}-${homeWeighted})`);
+            return awayWeighted > homeWeighted ? 'away' : 'home';
+        }
+
+        // 2. Captains (Slot 1 vs 5 -> Index 0)
+        const awayCaps = getStat('away', [0]);
+        const homeCaps = getStat('home', [0]);
+        if (awayCaps !== homeCaps) {
+            msg(`Tiebreaker: ${getTeamDisplayName(awayCaps > homeCaps ? 'away' : 'home')} wins on Captains (${awayCaps}-${homeCaps})`);
+            return awayCaps > homeCaps ? 'away' : 'home';
+        }
+
+        // 3. T2s (Slot 2 vs 6 -> Index 1)
+        const awayT2 = getStat('away', [1]);
+        const homeT2 = getStat('home', [1]);
+        if (awayT2 !== homeT2) {
+            msg(`Tiebreaker: ${getTeamDisplayName(awayT2 > homeT2 ? 'away' : 'home')} wins on T2s (${awayT2}-${homeT2})`);
+            return awayT2 > homeT2 ? 'away' : 'home';
+        }
+
+        // 4. T3s (Slot 3 vs 7 -> Index 2)
+        const awayT3 = getStat('away', [2]);
+        const homeT3 = getStat('home', [2]);
+        if (awayT3 !== homeT3) {
+            msg(`Tiebreaker: ${getTeamDisplayName(awayT3 > homeT3 ? 'away' : 'home')} wins on T3s (${awayT3}-${homeT3})`);
+            return awayT3 > homeT3 ? 'away' : 'home';
+        }
+
+        // 5. Defending Team (Last Song)
+        const lastEntry = match.history[match.history.length - 1];
+        const winnerSide = lastEntry.poss === 'away' ? 'home' : 'away';
+        msg(`Tiebreaker: ${getTeamDisplayName(winnerSide)} wins on Defending Tiebreaker`);
+        return winnerSide;
+    };
+
     const endGame = (winnerSide) => {
         let seriesFinished  = false;
 
@@ -382,20 +450,23 @@
                 const isCorrect = checkSlot(slotId);
                 const pid = getPlayerId(slotId);
                 
-                if (pid && match.streaks[pid] === undefined) match.streaks[pid] = 0;
+                // Use robust check for pid existence
+                if (pid != null && match.streaks[pid] === undefined) match.streaks[pid] = 0;
 
                 if (isCorrect) {
                     correctCount++;
-                    if (pid) match.streaks[pid]++;
+                    if (pid != null) match.streaks[pid]++;
                     
                     let val = 1; // Base
                     if (config.captains.includes(slotId)) val += 1; // Captain
-                    if (pid && match.streaks[pid] >= 3) val += 1;   // Hot Streak
+                    
+                    // Hot Streak Check: pid must be valid AND streak must be >= 3
+                    if (pid != null && match.streaks[pid] >= 3) val += 1;
                     
                     sum += val;
                     pattern += val.toString();
                 } else {
-                    if (pid) match.streaks[pid] = 0;
+                    if (pid != null) match.streaks[pid] = 0;
                     pattern += "0";
                 }
             });
@@ -453,7 +524,6 @@
         
         if (isBuzzerBeater && result.name !== "Rebound") {
             result.pts += 1;
-            resultDisplayName = "Buzzer Beater " + result.name;
         }
 
         let scoringTeam = null;
@@ -471,10 +541,32 @@
             match.possession = match.possession === 'away' ? 'home' : 'away';
         }
 
-        const fbText = fastBreakWinner ? ` [FB: ${config.teamNames[fastBreakWinner]}]` : "";
+        // --- Build Combined Message ---
+        // Format: 2000 2000 [(Bucks Fast Break)] [Buzzer Beater] Bucks Free Throw 14-20 | [End of ...] | [Next Possession: Lakers →]
+        
         let displayAwayPattern = awayStats.pattern;
         let displayHomePattern = homeStats.pattern;
         let displayScoreStr = `${match.totalScore.away}-${match.totalScore.home}`;
+
+        if (config.isSwapped) {
+            displayScoreStr = `${match.totalScore.home}-${match.totalScore.away}`;
+            const temp = displayAwayPattern;
+            displayAwayPattern = displayHomePattern;
+            displayHomePattern = temp;
+        }
+
+        // Use getTeamName (no arrows) for events
+        const fbText = fastBreakWinner ? ` (${getTeamName(fastBreakWinner)} Fast Break)` : "";
+        const bbText = isBuzzerBeater ? ` Buzzer Beater` : "";
+        
+        let resText = resultDisplayName;
+        if (result.team !== "none" && scoringTeam) {
+            resText = `${getTeamName(scoringTeam)} ${resultDisplayName}`;
+        } else if (result.name === "Rebound") {
+             resText = "Rebound"; 
+        }
+
+        let mainMsg = `${displayAwayPattern} ${displayHomePattern}${fbText}${bbText} ${resText} ${displayScoreStr}`;
         
         // --- End Condition Checks ---
         const qEndScore = config.targetScore;
@@ -485,17 +577,14 @@
         
         const isGameEnd = isQEnd && (match.quarter >= config.totalQuarters);
         
-        // --- Build Combined Message ---
         let suffixMsg = "";
 
         if (isGameEnd) {
             suffixMsg = " | End of Game, returning to lobby";
             
-            // Calculate hypothetical series stats for the message (since endGame hasn't run yet)
+            // Calculate hypothetical series stats
             if (config.seriesLength > 1 && match.totalScore.away !== match.totalScore.home) {
                 const gameWinner = match.totalScore.away > match.totalScore.home ? 'away' : 'home';
-                
-                // Temp stats logic
                 let tempAwayWins = config.seriesStats.awayWins;
                 let tempHomeWins = config.seriesStats.homeWins;
                 
@@ -520,18 +609,17 @@
                 }
             }
         } else if (isQEnd) {
-            // Determine next possession: (CurrentQ + 1) -> Odd=Away, Even=Home
             const nextQ = match.quarter + 1;
             const nextPossSide = (nextQ % 2 !== 0) ? 'away' : 'home';
             const nextPossStr = getTeamDisplayName(nextPossSide);
             suffixMsg = ` | End of Q${match.quarter} | Next Possession: ${nextPossStr}`;
         } else {
+            // Use getTeamDisplayName (with arrows) for Next Possession
             let nextPossStr = getTeamDisplayName(match.possession);
             suffixMsg = ` | Next Possession: ${nextPossStr}`;
         }
 
-        const mainMsg = `${displayAwayPattern} ${displayHomePattern} ${resultDisplayName}${fbText} ${displayScoreStr}${suffixMsg}`;
-        chatMessage(mainMsg);
+        chatMessage(mainMsg + suffixMsg);
 
         match.history.push({
             q: match.quarter,
@@ -550,13 +638,10 @@
                     const winner = match.totalScore.away > match.totalScore.home ? 'away' : 'home';
                     endGame(winner);
                 } else {
-                    // Draw logic
-                    chatMessage("Regulation ended in a Tie!");
-                    if (config.knockout) chatMessage("Proceed to Tiebreakers.");
-                    endGame('draw');
+                    const winnerSide = resolveTie(currentAwaySlots, currentHomeSlots);
+                    endGame(winnerSide);
                 }
             } else {
-                // Next Quarter Setup
                 match.quarter++;
                 match.songInQuarter = 0;
                 match.quarterScore = {away: 0, home: 0};
@@ -572,26 +657,65 @@
     // -------------------------------------------------------------------------------------
 
     const downloadScoresheet = () => {
-        if (!match.history.length) return;
+        if (!match.history.length) {
+            systemMessage("Error: No data to export");
+            return;
+        }
 
-        const safeAway = config.teamNames.away.replace(/[^a-z0-9]/gi, '-');
-        const safeHome = config.teamNames.home.replace(/[^a-z0-9]/gi, '-');
+        const awayNameClean = config.isSwapped ? config.teamNames.home : config.teamNames.away;
+        const homeNameClean = config.isSwapped ? config.teamNames.away : config.teamNames.home;
         
         const date = new Date();
         const yy = String(date.getFullYear()).slice(2);
         const mm = String(date.getMonth() + 1).padStart(2, '0');
         const dd = String(date.getDate()).padStart(2, '0');
         
+        const safeAway = awayNameClean.replace(/[^a-z0-9]/gi, '_');
+        const safeHome = homeNameClean.replace(/[^a-z0-9]/gi, '_');
         const fileName = `${yy}${mm}${dd}-${config.gameNumber}-${safeAway}-${safeHome}.html`;
 
-        let html = `<html><head><title>NBA Score - Game ${config.gameNumber}</title>
-        <style>table{border-collapse:collapse;text-align:center}th,td{border:1px solid black;padding:5px}</style>
-        </head><body>
-        <table><thead><tr>
-        <th>Q</th><th>Song</th><th>Poss</th><th>Result</th><th>Score</th>
-        </tr></thead><tbody>`;
+        const lastEntry = match.history[match.history.length - 1];
+        const titleStr = `Game ${config.gameNumber}: ${awayNameClean} ${lastEntry.score} ${homeNameClean}`;
 
-        // Count row spans per quarter
+        const awaySlots = config.isSwapped ? gameConfig.homeSlots : gameConfig.awaySlots;
+        const homeSlots = config.isSwapped ? gameConfig.awaySlots : gameConfig.homeSlots;
+        const subHeaders = gameConfig.posNames; 
+
+        let html = `
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>${titleStr}</title>
+            <style>
+                body    {font-family: sans-serif; padding: 20px;}
+                table   {border-collapse: collapse; text-align: center; margin: 0 auto;}
+                th, td  {border: 1px solid black; padding: 8px;}
+            </style>
+        </head>
+        <body>
+            <table>
+                <thead>
+                    <tr><th colspan="15" style="font-size: 1.5em; font-weight: bold;">${titleStr}</th></tr>
+                    <tr>
+                        <th rowspan="2">Quarter</th>
+                        <th rowspan="2">Song</th>
+                        <th rowspan="2">Possession</th>
+                        <th colspan="4">${awayNameClean}</th>
+                        <th colspan="4">${homeNameClean}</th>
+                        <th rowspan="2">Result</th>
+                        <th colspan="2">Score</th>
+                        <th rowspan="2">Winner</th>
+                    </tr>
+                    <tr>
+                        ${subHeaders.map(h => `<th>${h}</th>`).join('')}
+                        ${subHeaders.map(h => `<th>${h}</th>`).join('')}
+                        <th>${awayNameClean}</th>
+                        <th>${homeNameClean}</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
         const qCounts = {};
         match.history.forEach(row => {
             qCounts[row.q] = (qCounts[row.q] || 0) + 1;
@@ -602,6 +726,33 @@
         match.history.forEach(row => {
             const possName = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
             
+            let winnerName = "";
+            const [scoreAway, scoreHome] = row.score.split('-').map(Number);
+            
+            const isQEnd = scoreAway >= config.targetScore || scoreHome >= config.targetScore || row.song >= config.quarterMaxSongs;
+            const isGameEnd = isQEnd && row.q === config.totalQuarters;
+
+            if (isGameEnd) {
+                 if (scoreAway > scoreHome) winnerName = config.teamNames.away;
+                 else if (scoreHome > scoreAway) winnerName = config.teamNames.home;
+                 else {
+                     const wSide = resolveTie(awaySlots, homeSlots, true);
+                     winnerName = config.teamNames[wSide] + " (Tiebreaker)";
+                 }
+            }
+
+            const generateCells = (patternArr, slots) => {
+                return patternArr.map((isCorrect, index) => {
+                    if (isCorrect === 0) return `<td></td>`;
+                    const slotId = slots[index];
+                    const isCaptain = config.captains.includes(slotId);
+                    return `<td>${isCaptain ? 2 : 1}</td>`;
+                }).join('');
+            };
+
+            const awayCells = generateCells(row.awayArr, awaySlots);
+            const homeCells = generateCells(row.homeArr, homeSlots);
+
             html += `<tr>`;
             
             if (!printedQ[row.q]) {
@@ -609,9 +760,16 @@
                 printedQ[row.q] = true;
             }
 
-            html += `<td>${row.song}</td><td>${possName}</td>
-                <td>${row.result}</td><td>${row.score}</td>
-            </tr>`;
+            html += `
+                    <td>${row.song}</td>
+                    <td>${possName}</td>
+                    ${awayCells}
+                    ${homeCells}
+                    <td>${row.result}</td>
+                    <td>${scoreAway}</td>
+                    <td>${scoreHome}</td>
+                    <td>${winnerName}</td>
+                </tr>`;
         });
 
         html += `</tbody></table></body></html>`;
@@ -635,10 +793,10 @@
     };
 
     const printHowTo = () => {
-        systemMessage("1. /nba setHost [1-8] - Set Lobby Host");
-        systemMessage("2. /nba setTeams [Away] [Home] - Set Team Names");
-        systemMessage("3. /nba setSeries [1/2/7] - Set Series Length");
-        systemMessage("4. /nba start - Begin Game");
+        systemMessage("1. /nba setHost [1-8]: Set the slot of the lobby host, defaults to 0 (cannot start unless changed)");
+        systemMessage("2. /nba setTeams [Away] [Home]: Set the team names");
+        systemMessage("3. /nba setSeries [1/2/7]: Set the series length, defaults to 7");
+        systemMessage("4. /nba start: Begin the game");
     };
 
     // -------------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-# NBA Mode v0.alpha.0
+# NBA Mode v0-beta.0.1
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
@@ -90,14 +90,12 @@ In very simple terms: *just answer as correctly and as quickly as you can*
         <tr>
             <td style="text-align:center">Song Difficulty</td>
             <td style="text-align:center">0-100</td>
-            <td style="text-align:center" colspan="2">0-40</td>
-            <td style="text-align:center">0-100</td>
+            <td style="text-align:center" colspan="3">0-40</td>
         </tr>
         <tr>
             <td style="text-align:center">Song Mix</td>
             <td style="text-align:center">Random</td>
-            <td style="text-align:center" colspan="2" >Watched with <strong>Random</strong> Rig Distribution</td>
-            <td style="text-align:center">Random</td>
+            <td style="text-align:center" colspan="3" >Watched with Random Rig Distribution</td>
         </tr>
         <tr>
             <td style="text-align:center">DIFF</td>
@@ -216,7 +214,7 @@ The team listed first (above) on Challonge is the **Away** team for each series.
 </table>
 
 ## Ending: Elam, Tiebreaker
-Each Quarter ends after a team reached **≥10** points 
+Each Quarter ends after a team reached **≥8** points 
 or after **10** songs, whichever happens first.
 If Regulation doesn't break the tie, 
 consult the following tiebreakers:
@@ -224,7 +222,7 @@ consult the following tiebreakers:
 2. Captains (Slots 1 vs 5)
 3. T2s (Slots 2 vs 6)
 4. T3s (Slots 3 vs 7)
-5. Possession (the **Defending** Team for the Last Song)
+5. Defending Team for the Last Song
 
 ## Format: Best-Of-7, Round Robin, Knockouts
 The script will automatically swap Away and Home teams between consecutive games.

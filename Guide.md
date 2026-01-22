@@ -40,7 +40,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*
     <tr>
         <td style="text-align:center">Regulation</td>
         <td style="text-align:center">1.5 hours</td>
-        <td style="text-align:center">16-40</td>
+        <td style="text-align:center">12-40</td>
         <td style="text-align:center">10</td>
         <td style="text-align:center">0-40</td>
         <td style="text-align:center">Watched with Random Rig Distribution</td>
@@ -77,7 +77,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*
         <tr>
             <td style="text-align:center">Song Count</td>
             <td style="text-align:center">30</td>
-            <td style="text-align:center">16-40</td>
+            <td style="text-align:center">12-40</td>
             <td style="text-align:center">11-20</td>
             <td style="text-align:center">0-5</td>
         </tr>

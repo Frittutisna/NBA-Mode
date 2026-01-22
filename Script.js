@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-beta.0.0
+// @version      0-beta.0.1
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -188,9 +188,16 @@
                         cutEnd      =   LIMIT;
                         nextStart   =   LIMIT;
                     } else {
-                        cutEnd      =   splitIndex;
-                        nextStart   =   splitIndex + 1;
-                        if (nextStart < remaining.length && remaining[nextStart] === ' ') nextStart++;
+                        const char = remaining[splitIndex];
+
+                        if (char === ' ') {
+                            cutEnd      = splitIndex;
+                            nextStart   = splitIndex + 1;
+                        } else {
+                            cutEnd      = splitIndex + 1;
+                            nextStart   = splitIndex + 1;
+                            if (nextStart < remaining.length && remaining[nextStart] === ' ') nextStart++;
+                        }
                     }
                     
                     this.queue.push({msg: remaining.substring(0, cutEnd), isSystem});
@@ -378,6 +385,7 @@
             chatMessage(`Series finished | ${winner} won ${wPts}-${lPts}.`);
         }
 
+        sendGameCommand("pause game");
         setTimeout(() => sendGameCommand("return to lobby"), config.delay);
     };
 
@@ -538,6 +546,11 @@
         const isQEnd    = match.quarterScore.away >= qEndScore || match.quarterScore.home >= qEndScore || match.songInQuarter >= qEndSong;
         const isGameEnd = isQEnd && (match.quarter >= config.totalQuarters);
         let suffixMsg   = "";
+
+        if (match.quarter === config.totalQuarters && match.songInQuarter === config.quarterMaxSongs - 1) {
+            chatMessage(`Next up is the Last Song, pausing to return to lobby`);
+            match.pendingPause = true;
+        }
 
         if (isGameEnd) {
             suffixMsg = " | End of Game, returning to lobby";

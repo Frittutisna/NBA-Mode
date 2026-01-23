@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-beta.0.1
+// @version      0-beta.0.2
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -60,39 +60,41 @@
     };
 
     const TERMS = {
-        "away"              : "The team listed first on Challonge. Starts Q1 and Q3 with possession",
-        "home"              : "The team listed second on Challonge. Starts Q2 and Q4 with possession",
+        "away"              : "The team before the @ sign. Starts Q1 and Q3 with possession",
+        "home"              : "The team after the @ sign. Starts Q2 and Q4 with possession",
         "possession"        : "The state of being the Attacking Team. Swaps after every song unless after a Slam Dunk or between Quarters",
+        "attacking"         : "The team with possession. Their main role is to score points",
+        "defending"         : "The team without possession. Their main role is to prevent the other team from scoring",
         "captain"           : "Slots 1 and 5. Correct guesses count +1 to TDIFF",
         "hot streak"        : "Player that gets ≥ 3 in a row. Correct guesses count +1 to TDIFF",
         "fast break"        : "If both teams answer correctly, the team with the fastest correct player gets +1 to their TDIFF sum",
-        "tdiff"             : "Total Difference: Attacking - Defending + Fast Break",
-        "slam dunk"         : "TDIFF ≥ 5: Attacking Team gets 3 points and keeps possession",
-        "3-pointer"         : "TDIFF = 4 or 3: Attacking Team gets 3 points. Possession swaps",
-        "2-pointer"         : "TDIFF = 2 or 1: Attacking Team gets 2 points. Possession swaps",
-        "free throw"        : "TDIFF = 0: Attacking Team gets 1 point. Possession swaps",
-        "rebound"           : "TDIFF = -1: No points awarded. Possession swaps",
+        "tdiff"             : "Total Difference. Attacking - Defending + Fast Break",
+        "slam dunk"         : "TDIFF ≥ 5. Attacking Team gets 3 points and keeps possession",
+        "3-pointer"         : "TDIFF = 4 or 3. Attacking Team gets 3 points. Possession swaps",
+        "2-pointer"         : "TDIFF = 2 or 1. Attacking Team gets 2 points. Possession swaps",
+        "free throw"        : "TDIFF = 0. Attacking Team gets 1 point. Possession swaps",
+        "rebound"           : "TDIFF = -1. No points awarded. Possession swaps",
         "turnover"          : "TDIFF = -2. Defending Team gets 1 point. Possession swaps",
         "block"             : "TDIFF = -3 or -4. Defending Team gets 2 points. Possession swaps",
         "steal"             : "TDIFF ≤ -5. Defending Team gets 3 points. Possession swaps",
         "buzzer beater"     : "On Song 10 of a Quarter, point-scoring plays are worth +1 point",
-        "elam ending"       : `A Quarter ends if a team scores ≥${config.targetScore} points in said quarter, or after ${config.quarterMaxSongs} songs`,
+        "elam ending"       : `Ends Quarter if a team scores ≥${config.targetScore} points or after ${config.quarterMaxSongs} songs`,
     };
 
     const COMMAND_DESCRIPTIONS = {
-        "end"               : "Stop the game tracker",
+        "end"               : "End the game tracker",
         "export"            : "Download the HTML scoresheet",
         "flowchart"         : "Show link to the flowchart",
         "guide"             : "Show link to the guide",
         "howTo"             : "Show the step-by-step setup tutorial",
-        "resetEverything"   : "Hard reset: Wipe all settings, series history, and teams to default",
-        "resetGame"         : "Wipe current Game progress and stop tracker",
-        "resetSeries"       : "Wipe all series history and reset to Game 1",
-        "setGame"           : "Set the current game number (/nba setGame [1-7])",
-        "setHost"           : "Set the script host (/nba setHost [1-8])",
-        "setSeries"         : "Set the series length (/nba setSeries [1/2/7]",
-        "setTeams"          : "Set team names (/nba setTeams [Away] [Home])",
-        "setTest"           : "Enable/disable loose lobby validation (/nba setTest [true/false])",
+        "resetEverything"   : "Wipe everything and reset to default",
+        "resetGame"         : "Wipe game progress and stop tracker",
+        "resetSeries"       : "Wipe game/series progress and reset to Game 1",
+        "setGame"           : "Set the current game number (/nba setGame [1-7], defaults to 1)",
+        "setHost"           : "Set the script host (/nba setHost [1-8], defaults to 0 and cannot start unless changed)",
+        "setSeries"         : "Set the series length (/nba setSeries [1/2/7], defaults to 7)",
+        "setTeams"          : "Set team names (/nba setTeams [Away] [Home], defaults to Away and Home)",
+        "setTest"           : "Enable/disable loose lobby validation (/nba setTest [true/false], defaults to false)",
         "start"             : "Start the game tracker",
         "swap"              : "Swap Away and Home teams",
         "whatIs"            : "Explain a term (/nba whatIs [Term])"
@@ -131,7 +133,7 @@
             if (p) return p.name;
         }
 
-        return null;
+        return `Player ${teamId}`;
     };
 
     const updateLobbyName = (awayClean, homeClean) => {
@@ -404,7 +406,7 @@
         if (!check.valid) {systemMessage(check.msg); return}
         resetMatchData();
         match.isActive = true;
-        chatMessage(`Game ${config.gameNumber}: ${getArrowedTeamName('away')} @ ${getArrowedTeamName('home')} is close to tip-off!`);
+        chatMessage(`Game ${config.gameNumber}: ${getCleanTeamName('away')} @ ${getCleanTeamName('home')} is close to tip-off!`);
     };
 
     const processRound = (payload) => {
@@ -659,7 +661,7 @@
         <body>
             <table>
                 <thead>
-                    <tr><th colspan="15" style="font-size: 1.5em; font-weight: bold;">${titleStr}</th></tr>
+                    <tr><th colspan="14" style="font-size: 1.5em; font-weight: bold;">${titleStr}</th></tr>
                     <tr>
                         <th rowspan="2">Quarter</th>
                         <th rowspan="2">Song</th>
@@ -668,7 +670,6 @@
                         <th colspan="4">${homeNameClean}</th>
                         <th rowspan="2">Result</th>
                         <th colspan="2">Score</th>
-                        <th rowspan="2">Winner</th>
                     </tr>
                     <tr>
                         ${subHeaders.map(h => `<th>${h}</th>`).join('')}
@@ -685,7 +686,17 @@
         const printedQ = {};
 
         match.history.forEach(row => {
-            const possName                  = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
+            const possName = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
+
+            const generateCells = (patternArr, slots) => {
+                return patternArr.map((isCorrect, index) => {
+                    if (isCorrect === 0) return `<td></td>`;
+                    const slotId    = slots[index];
+                    const isCaptain = config.captains.includes(slotId);
+                    return `<td>${isCaptain ? 2 : 1}</td>`;
+                }).join('');
+            };
+
             const awayCells                 = generateCells(row.awayArr, awaySlots);
             const homeCells                 = generateCells(row.homeArr, homeSlots);
             const [scoreAway, scoreHome]    = row.score.split('-').map(Number);
@@ -787,7 +798,7 @@
                                 const num = parseInt(parts[2]);
                                 if (num >= 1 && num <= 8) { 
                                     config.hostId   = num; 
-                                    const hName     = getPlayerNameAtTeamId(num) || `Player ${num}`;
+                                    const hName     = getPlayerNameAtTeamId(num);
                                     systemMessage(`Host: ${hName}`); 
                                 } else systemMessage("Error: Use /nba setHost [1-8]");
                             }
@@ -805,10 +816,7 @@
                                 config.isSwapped = !config.isSwapped;
                                 systemMessage(`Swapped teams`);
                             }
-                            else if (cmd === "resetgame") {
-                                resetMatchData();
-                                systemMessage("Game has been reset");
-                            }
+                            else if (cmd === "resetgame")       {resetMatchData(); chatMessage("Game has been reset")}
                             else if (cmd === "reseteverything") resetEverything();
                             else if (cmd === "resetseries") {
                                 resetMatchData();

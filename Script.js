@@ -122,18 +122,25 @@
         return config.teamNames[actualSide];
     };
 
+    const getTeamNumber = (player) => {
+        try {if (player.lobbySlot && player.lobbySlot.$TEAM_DISPLAY_TEXT) return parseInt(player.lobbySlot.$TEAM_DISPLAY_TEXT.text().trim(), 10)} 
+        catch (e) {return null}
+        return player.teamNumber;
+    };
+
     const getPlayerNameAtTeamId = (teamId) => {
-        if          (typeof quiz    !== 'undefined' && quiz     .inQuiz) {
-            const p = Object.values(quiz    .players)   .find(player => player.teamNumber == teamId);
-            if (p) return p.name;
-        } else if   (typeof lobby   !== 'undefined' && lobby    .inLobby) {
-            const p = Object.values(lobby   .players)   .find(player => player.teamNumber == teamId);
-            if (p) return p.name;
-        } else if   (playersCache.length > 0) {
-            const p = playersCache                      .find(player => player.teamNumber == teamId);
+        if      (typeof quiz !== 'undefined' && quiz.inQuiz)    {
+            const p = Object.values(quiz.players)   .find(player => player.teamNumber == teamId);
             if (p) return p.name;
         }
-
+        else if (typeof lobby !== 'undefined' && lobby.inLobby) {
+            const p = Object.values(lobby.players)  .find(player => getTeamNumber(player) == teamId);
+            if (p) return p.name;
+        }
+        if      (playersCache.length > 0)                       {
+            const p = playersCache                  .find(player => player.teamNumber == teamId);
+            if (p) return p.name;
+        }
         return `Player ${teamId}`;
     };
 
@@ -377,6 +384,7 @@
 
         sendGameCommand("pause game");
         setTimeout(() => sendGameCommand("return to lobby"), config.delay);
+        chatMessage(`Type "/nba start" to start Game ${config.gameNumber}`);
     };
 
     const validateLobby = () => {
@@ -605,8 +613,8 @@
             return;
         }
 
-        const awayNameClean = config.isSwapped ? config.teamNames.home : config.teamNames.away;
-        const homeNameClean = config.isSwapped ? config.teamNames.away : config.teamNames.home;
+        const awayNameClean = config.teamNames.away;
+        const homeNameClean = config.teamNames.home;
         
         const date  = new Date();
         const yy    = String(date.getFullYear   ())     .slice      (2);
@@ -616,7 +624,7 @@
         const safeAway      = awayNameClean.replace(/[^a-z0-9]/gi, '_');
         const safeHome      = homeNameClean.replace(/[^a-z0-9]/gi, '_');
         const fileName      = `${yy}${mm}${dd}-${match.gameNumber}-${safeAway}-${safeHome}.html`;
-        const lastEntry     = match.history[match.history.length - 1];
+        const lastEntry     = match.history[match.history.length - 1];        
         const titleStr      = `Game ${match.gameNumber} (${match.history.length}): ${awayNameClean} ${lastEntry.score} ${homeNameClean}`;
         const subHeaders    = gameConfig.posNames; 
 
@@ -659,10 +667,15 @@
         const printedQ = {};
 
         match.history.forEach(row => {
-            const possName                  = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
+            let possName;
+            if (config.isSwapped)   possName = row.poss === 'away' ? config.teamNames.home : config.teamNames.away;
+            else                    possName = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
+            
             const generateCells             = (valuesArr) => {return valuesArr.map(val => {return `<td>${val === 0 ? "" : val}</td>`}).join('');};
-            const awayCells                 = generateCells(row.awayArr);
-            const homeCells                 = generateCells(row.homeArr);
+            const leftArr                   = config.isSwapped ? row.homeArr : row.awayArr;
+            const rightArr                  = config.isSwapped ? row.awayArr : row.homeArr;
+            const awayCells                 = generateCells(leftArr);
+            const homeCells                 = generateCells(rightArr);
             const [scoreAway, scoreHome]    = row.score.split('-').map(Number);
 
             html += `<tr>`;

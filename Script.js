@@ -42,6 +42,7 @@
 
     const match = {
         isActive        : false,
+        gameNumber      : 1,
         quarter         : 1,
         songInQuarter   : 0,
         totalScore      : {away: 0, home: 0},
@@ -215,9 +216,8 @@
             this.isProcessing   = true;
             const item          = this.queue.shift();
 
-            if (item.isSystem) {
-                if (typeof gameChat !== 'undefined') gameChat.systemMessage(item.msg);
-            } else if (typeof socket !== 'undefined') {
+            if      (item.isSystem)                 {if (typeof gameChat !== 'undefined') gameChat.systemMessage(item.msg)} 
+            else if (typeof socket !== 'undefined') {
                 socket.sendCommand({
                     type    : "lobby",
                     command : "game chat message",
@@ -268,6 +268,7 @@
 
     const resetMatchData = () => {
         match.isActive      = false;
+        match.gameNumber    = config.gameNumber;
         match.quarter       = 1;
         match.songInQuarter = 0;
         match.totalScore    = {away: 0, home: 0};
@@ -293,61 +294,48 @@
         systemMessage("Everything has been reset");
     };
 
-    const resolveTie = (awaySlots, homeSlots, silent = false) => {
-        const q4History = match.history.filter(r => r.q === 4);
-
+    const resolveTie = () => {
+        const history = match.history.filter(r => r.q === 4);
         const getStat = (side, targetIndices) => {
-            let total   = 0;
-            const slots = side === 'away' ? awaySlots : homeSlots;
-
-            q4History.forEach(row => {
+            let total = 0;
+            history.forEach(row => {
                 const arr = side === 'away' ? row.awayArr : row.homeArr;
-
-                targetIndices.forEach(idx => {
-                    if (arr[idx] === 1) {
-                        const slotId    =   slots[idx];
-                        const isCaptain =   config.captains.includes(slotId);
-                        total           +=  (isCaptain ? 2 : 1);
-                    }
-                });
+                targetIndices.forEach(idx => {if (val > 0) total += arr[idx]});
             });
-
             return total;
         };
-
-        const msg = (txt) => {if (!silent) chatMessage(txt)};
 
         const awayWeighted  = getStat('away', [0, 1, 2, 3]);
         const homeWeighted  = getStat('home', [0, 1, 2, 3]);
         if (awayWeighted !== homeWeighted) {
-            msg(`Tiebreaker: ${getArrowedTeamName(awayWeighted > homeWeighted ? 'away' : 'home')} wins on Weighted Total Tiebreaker (${awayWeighted}-${homeWeighted})`);
+            chatMessage(`Tiebreaker: ${getCleanTeamName(awayWeighted > homeWeighted ? 'away' : 'home')} wins on Weighted Total Tiebreaker (${awayWeighted}-${homeWeighted})`);
             return awayWeighted > homeWeighted ? 'away' : 'home';
         }
 
         const awayCapt = getStat('away', [0]);
         const homeCapt = getStat('home', [0]);
         if (awayCapt !== homeCapt) {
-            msg(`Tiebreaker: ${getArrowedTeamName(awayCapt > homeCapt ? 'away' : 'home')} wins on Captain Tiebreaker (${awayCapt}-${homeCapt})`);
+            chatMessage(`Tiebreaker: ${getCleanTeamName(awayCapt > homeCapt ? 'away' : 'home')} wins on Captain Tiebreaker (${awayCapt}-${homeCapt})`);
             return awayCapt > homeCapt ? 'away' : 'home';
         }
 
         const awayT2 = getStat('away', [1]);
         const homeT2 = getStat('home', [1]);
         if (awayT2 !== homeT2) {
-            msg(`Tiebreaker: ${getArrowedTeamName(awayT2 > homeT2 ? 'away' : 'home')} wins on T2 Tiebreaker (${awayT2}-${homeT2})`);
+            chatMessage(`Tiebreaker: ${getCleanTeamName(awayT2 > homeT2 ? 'away' : 'home')} wins on T2 Tiebreaker (${awayT2}-${homeT2})`);
             return awayT2 > homeT2 ? 'away' : 'home';
         }
 
         const awayT3 = getStat('away', [2]);
         const homeT3 = getStat('home', [2]);
         if (awayT3 !== homeT3) {
-            msg(`Tiebreaker: ${getArrowedTeamName(awayT3 > homeT3 ? 'away' : 'home')} wins on T3 Tiebreaker (${awayT3}-${homeT3})`);
+            chatMessage(`Tiebreaker: ${getCleanTeamName(awayT3 > homeT3 ? 'away' : 'home')} wins on T3 Tiebreaker (${awayT3}-${homeT3})`);
             return awayT3 > homeT3 ? 'away' : 'home';
         }
 
         const lastEntry     = match.history[match.history.length - 1];
         const winnerSide    = lastEntry.poss === 'away' ? 'home' : 'away';
-        msg(`Tiebreaker: ${getArrowedTeamName(winnerSide)} wins on Defending Tiebreaker`);
+        chatMessage(`Tiebreaker: ${getArrowedTeamName(winnerSide)} wins on Defending Tiebreaker`);
         return winnerSide;
     };
 
@@ -405,7 +393,8 @@
         const check = validateLobby();
         if (!check.valid) {systemMessage(check.msg); return}
         resetMatchData();
-        match.isActive = true;
+        match.isActive      = true;
+        match.gameNumber    = config.gameNumber;
         chatMessage(`Game ${config.gameNumber}: ${getCleanTeamName('away')} @ ${getCleanTeamName('home')} is close to tip-off!`);
     };
 
@@ -436,6 +425,7 @@
             let sum             = 0;
             let correctCount    = 0;
             let pattern         = "";
+            let values          = [];
 
             slots.forEach(slotId => {
                 const isCorrect = checkSlot(slotId);
@@ -450,53 +440,40 @@
                     if (pid != null && match.streaks[pid] >= 3) val += 1;
                     sum     += val;
                     pattern += val.toString();
+                    values.push(val);
                 } else {
                     if (pid != null) match.streaks[pid] = 0;
                     pattern += "0";
+                    values.push(0);
                 }
             });
-            return {sum, correctCount, pattern};
+            return {sum, correctCount, pattern, values};
         };
 
-        const awayStats = computeTeamStats(currentAwaySlots);
-        const homeStats = computeTeamStats(currentHomeSlots);
-
-        let fastBreakBonus  = 0; 
+        const awayStats     = computeTeamStats(currentAwaySlots);
+        const homeStats     = computeTeamStats(currentHomeSlots);
         let fastBreakWinner = null;
 
         if (awayStats.correctCount > 0 && homeStats.correctCount > 0) {
             for (const pid of match.answerQueue) {
                 if (resultsMap[pid]) {
                     const pObj = Object.values(quiz.players).find(p => p.gamePlayerId === pid);
-
-                    if (pObj) {
-                        if (currentAwaySlots.includes(pObj.teamNumber)) {
-                            fastBreakBonus  = 1;
-                            fastBreakWinner = 'away';
-                        } else {
-                            fastBreakBonus  = -1; 
-                            fastBreakWinner = 'home';
-                        }
-                    }
-
+                    if (pObj) fastBreakWinner = (currentAwaySlots.includes(pObj.team)) ? 'away' : 'home'
                     break;
                 }
             }
         }
 
-        let tdiff = 0;
-        let fbVal = 0;
+        let awaySum         = awayStats.sum;
+        let homeSum         = homeStats.sum;
+        let fastBreakVal    = 1;
+
+        if      (fastBreakWinner === 'away') awaySum += fastBreakVal;
+        else if (fastBreakWinner === 'home') homeSum += fastBreakVal;
+
+        let tdiff = (match.possession === 'away') ? awaySum - homeSum : homeSum - awaySum;
         
-        if (match.possession === 'away') {
-            if (fastBreakWinner === 'away') fbVal = 1;
-            tdiff = (awayStats.sum + fbVal) - homeStats.sum;
-        } else {
-            if (fastBreakWinner === 'home') fbVal = 1;
-            tdiff = (homeStats.sum + fbVal) - awayStats.sum;
-        }
-
-        let result = {name: "", pts: 0, swap: true, team: "none"};
-
+        let                     result = {name: "",             pts: 0, swap: true,     team: "none"};
         if      (tdiff >=   5)  result = {name: "Slam Dunk",    pts: 3, swap: false,    team: "att"};
         else if (tdiff >=   3)  result = {name: "3-Pointer",    pts: 3, swap: true,     team: "att"};
         else if (tdiff >=   1)  result = {name: "2-Pointer",    pts: 2, swap: true,     team: "att"};
@@ -600,8 +577,8 @@
             poss    : prevPoss,
             result  : resultDisplayName,
             score   : displayScoreStr,
-            awayArr : currentAwaySlots.map(s => checkSlot(s) ? 1 : 0),
-            homeArr : currentHomeSlots.map(s => checkSlot(s) ? 1 : 0)
+            awayArr : awayStats.values,
+            homeArr : homeStats.values
         });
 
         if (isQEnd) {
@@ -610,7 +587,7 @@
                     const winner = match.totalScore.away > match.totalScore.home ? 'away' : 'home';
                     endGame(winner);
                 } else {
-                    const winnerSide = resolveTie(currentAwaySlots, currentHomeSlots);
+                    const winnerSide = resolveTie();
                     endGame(winnerSide);
                 }
             } else {
@@ -636,15 +613,11 @@
         const mm    = String(date.getMonth      () + 1) .padStart   (2, '0');
         const dd    = String(date.getDate       ())     .padStart   (2, '0');
         
-        const safeAway = awayNameClean.replace(/[^a-z0-9]/gi, '_');
-        const safeHome = homeNameClean.replace(/[^a-z0-9]/gi, '_');
-        const fileName = `${yy}${mm}${dd}-${config.gameNumber}-${safeAway}-${safeHome}.html`;
-
-        const lastEntry = match.history[match.history.length - 1];
-        const titleStr  = `Game ${config.gameNumber}: ${awayNameClean} ${lastEntry.score} ${homeNameClean}`;
-
-        const awaySlots     = config.isSwapped ? gameConfig.homeSlots : gameConfig.awaySlots;
-        const homeSlots     = config.isSwapped ? gameConfig.awaySlots : gameConfig.homeSlots;
+        const safeAway      = awayNameClean.replace(/[^a-z0-9]/gi, '_');
+        const safeHome      = homeNameClean.replace(/[^a-z0-9]/gi, '_');
+        const fileName      = `${yy}${mm}${dd}-${match.gameNumber}-${safeAway}-${safeHome}.html`;
+        const lastEntry     = match.history[match.history.length - 1];
+        const titleStr      = `Game ${match.gameNumber} (${match.history.length}): ${awayNameClean} ${lastEntry.score} ${homeNameClean}`;
         const subHeaders    = gameConfig.posNames; 
 
         let html = `
@@ -686,19 +659,10 @@
         const printedQ = {};
 
         match.history.forEach(row => {
-            const possName = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
-
-            const generateCells = (patternArr, slots) => {
-                return patternArr.map((isCorrect, index) => {
-                    if (isCorrect === 0) return `<td></td>`;
-                    const slotId    = slots[index];
-                    const isCaptain = config.captains.includes(slotId);
-                    return `<td>${isCaptain ? 2 : 1}</td>`;
-                }).join('');
-            };
-
-            const awayCells                 = generateCells(row.awayArr, awaySlots);
-            const homeCells                 = generateCells(row.homeArr, homeSlots);
+            const possName                  = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
+            const generateCells             = (valuesArr) => {return valuesArr.map(val => {return `<td>${val === 0 ? "" : val}</td>`}).join('');};
+            const awayCells                 = generateCells(row.awayArr);
+            const homeCells                 = generateCells(row.homeArr);
             const [scoreAway, scoreHome]    = row.score.split('-').map(Number);
 
             html += `<tr>`;
@@ -746,7 +710,12 @@
 
     const setup = () => {
         new Listener("Host Game",       (p) => {playersCache = p.players})                                                      .bindListener();
-        new Listener("Join Game",       (p) => {playersCache = p.quizState.players})                                            .bindListener();
+        
+        new Listener("Join Game",       (p) => {
+            if      (p.quizState)   playersCache = p.quizState.players;
+            else if (p.players)     playersCache = p.players;
+        }).bindListener();
+
         new Listener("Game Starting",   (p) => {playersCache = p.players})                                                      .bindListener();
         new Listener("Player Left",     (p) => {playersCache = playersCache.filter(x => x.gamePlayerId !== p.gamePlayerId)})    .bindListener();
         new Listener("New Player",      (p) => {playersCache.push(p)})                                                          .bindListener();

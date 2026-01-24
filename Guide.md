@@ -76,7 +76,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*
         </tr>
         <tr>
             <td style="text-align:center">Song Count</td>
-            <td style="text-align:center">30</td>
+            <td style="text-align:center">16-30</td>
             <td style="text-align:center">12-40</td>
             <td style="text-align:center">11-20</td>
             <td style="text-align:center">0-5</td>
@@ -111,7 +111,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*
         <tr><td style="text-align:center">Base Stealing</td></tr>
         <tr>
             <td style="text-align:center">Hot Streak</td>
-            <td style="text-align:center" rowspan="4">No</td>
+            <td style="text-align:center" rowspan="6">No</td>
             <td style="text-align:center" rowspan="4">Yes</td>
         </tr>
         <tr><td style="text-align:center">Fast Break</td></tr>
@@ -119,17 +119,19 @@ In very simple terms: *just answer as correctly and as quickly as you can*
         <tr><td style="text-align:center">Buzzer Beater</td></tr>
         <tr>
             <td style="text-align:center">OP/DP Split</td>
-            <td style="text-align:center" colspan="2" rowspan="5">No</td>
+            <td style="text-align:center" rowspan="5">No</td>
             <td style="text-align:center" colspan="2" rowspan="2">Yes</td>
         </tr>
         <tr><td style="text-align:center">Rouge</td></tr>
         <tr>
             <td style="text-align:center">Mercy Rule</td>
             <td style="text-align:center">Yes</td>
+            <td style="text-align:center">Yes</td>
             <td style="text-align:center">No</td>
         </tr>
         <tr>
             <td style="text-align:center">Sudden Death</td>
+            <td style="text-align:center" rowspan="2">No</td>
             <td style="text-align:center" rowspan="2">No</td>
             <td style="text-align:center" rowspan="2">Yes</td>
         </tr>
@@ -143,21 +145,7 @@ The team listed first (above) on Challonge is the **Away** team for each series.
 ## Score: Check The TDIFF
 <details>
     <summary><b>Click to know more about Scoring</b></summary>
-    <p>The <b>Away</b> team attacks (has <b>possession</b>) first 
-    to start <b>odd</b>-numbered quarters and vice-versa. 
-    Possession <b>swaps</b> after every song <b>except</b> after a 
-    <code>Slam Dunk</code> or between Quarters. 
-    Players who got <b>≥3</b> songs right in a row is on a
-    <b>Hot Streak</b>, and their correct guesses has a 
-    <b>+1 multiplier</b> for TDIFF calculations. 
-    <b>After</b> multipliers have been applied, if <b>both</b> teams have 
-    <b>≥1</b> player(s) that got the same song right, 
-    the <b>fastest</b> player to do so gets 
-    <b>+1</b> for their team's TDIFF calculations. 
-    To calculate points, subtract the Defending team’s score 
-    from the Attacking team’s score. 
-    Point-scoring plays are worth <b>+1</b> point 
-    in Song <b>10</b> of each Quarter. 
+    <p>The <b>Away</b> team attacks (has <b>possession</b>) first to start <b>odd</b>-numbered quarters and vice-versa. Possession <b>swaps</b> after every song <b>except</b> after a <code>Slam Dunk</code> or between Quarters. Players who got <b>≥3</b> songs right in a row is on a <b>Hot Streak</b>, and their correct guesses has a <b>+1 multiplier</b> for TDIFF calculations. <b>After</b> multipliers have been applied, if <b>both</b> teams have <b>≥1</b> player(s) that got the same song right, the <b>fastest</b> player to do so gets <b>+1</b> for their team's TDIFF calculations. To calculate points, subtract the Defending team’s score from the Attacking team’s score. Point-scoring plays are worth <b>+1</b> point in Song <b>10</b> of each Quarter. 
 </details>
 
 <table style="text-align:center">
@@ -214,10 +202,7 @@ The team listed first (above) on Challonge is the **Away** team for each series.
 </table>
 
 ## Ending: Elam, Tiebreaker
-Each Quarter ends after a team reached **≥8** points 
-or after **10** songs, whichever happens first.
-If Regulation doesn't break the tie, 
-consult the following tiebreakers:
+Each Quarter ends after a team reached **≥8** points or after **10** songs, whichever happens first. If Regulation doesn't break the tie, consult the following tiebreakers:
 1. Weighted Total (counting Captains twice)
 2. Captains (Slots 1 vs 5)
 3. T2s (Slots 2 vs 6)

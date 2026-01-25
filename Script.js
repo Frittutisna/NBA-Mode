@@ -853,7 +853,6 @@
                 if (idx > -1)   match.answerQueue.splice    (idx, 1);
                                 match.answerQueue.push      (ans.gamePlayerId);
             });
-            console.log("Queue: ", match.answerQueue);
         }).bindListener();
 
         new Listener("play next song", () => {

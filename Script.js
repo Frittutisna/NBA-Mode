@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-beta.1.2
+// @version      0-beta.1.3
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -476,28 +476,36 @@
             return {sum, correctCount, pattern, values};
         };
 
-        const awayStats     = computeTeamStats(currentAwaySlots);
-        const homeStats     = computeTeamStats(currentHomeSlots);
-        let fastBreakWinner = null;
+        const awayStats         = computeTeamStats(currentAwaySlots);
+        const homeStats         = computeTeamStats(currentHomeSlots);
+        let fastBreakWinner     = null;
+        let fastBreakPlayerName = "";
 
         if (awayStats.correctCount > 0 && homeStats.correctCount > 0) {
             for (const pid of match.answerQueue) {
                 if (resultsMap[pid]) {
                     const pObj = Object.values(quiz.players).find(p => p.gamePlayerId === pid);
-                    if (pObj) fastBreakWinner = (currentAwaySlots.includes(pObj.team)) ? 'away' : 'home'
+                    if (pObj) {
+                        const isAway        = currentAwaySlots.includes(pObj.team);
+                        fastBreakWinner     = isAway ? 'away' : 'home';
+                        fastBreakPlayerName = pObj.name;
+                        const targetStats   = isAway ? awayStats : homeStats;
+                        const targetSlots   = isAway ? currentAwaySlots : currentHomeSlots;
+                        const slotIndex     = targetSlots.findIndex(slotId => getPlayerId(slotId) === pid);
+                        if (slotIndex !== -1) {
+                            targetStats.values[slotIndex]   +=  1;
+                            targetStats.sum                 +=  1;
+                            targetStats.pattern             =   targetStats.values.join("");
+                        }
+                    }
                     break;
                 }
             }
         }
 
-        let awaySum         = awayStats.sum;
-        let homeSum         = homeStats.sum;
-        let fastBreakVal    = 1;
-
-        if      (fastBreakWinner === 'away') awaySum += fastBreakVal;
-        else if (fastBreakWinner === 'home') homeSum += fastBreakVal;
-
-        let tdiff = (match.possession === 'away') ? awaySum - homeSum : homeSum - awaySum;
+        let awaySum = awayStats.sum;
+        let homeSum = homeStats.sum;
+        let tdiff   = (match.possession === 'away') ? awaySum - homeSum : homeSum - awaySum;
         
         let                     result = {name: "",             pts: 0, swap: true,     team: "none"};
         if      (tdiff >=   5)  result = {name: "Slam Dunk",    pts: 3, swap: false,    team: "att"};
@@ -511,9 +519,9 @@
         const isBuzzerBeater    = match.songInQuarter === config.quarterMaxSongs;
         let resultDisplayName   = result.name;
 
-        if (isBuzzerBeater && result.name !== "Rebound") result.pts += 1;
-        let scoringTeam = null;
+        if (isBuzzerBeater) result.pts  +=  1;
 
+        let scoringTeam =   null;
         if      (result.team === "att") scoringTeam = match.possession;
         else if (result.team === "def") scoringTeam = match.possession === 'away' ? 'home' : 'away';
 
@@ -536,15 +544,11 @@
             displayHomePattern  = temp;
         }
 
-        const fbText    = fastBreakWinner       ? ` (${getCleanTeamName(fastBreakWinner)} Fast Break)`  : "";
-        const bbText    = isBuzzerBeater        ? ` Buzzer Beater`                                      : "";  
+        const fbText    = fastBreakWinner       ? ` (${fastBreakPlayerName} Fast Break)`  : "";
+        const bbText    = isBuzzerBeater        ? ` Buzzer Beater`                        : "";  
         let resText     = resultDisplayName;
-
-        if      (result.team !== "none"     && scoringTeam) resText = `${getCleanTeamName(scoringTeam)} ${resultDisplayName}`;
-        else if (result.name === "Rebound")                 resText = "Rebound"; 
-
-        let mainMsg = `${displayAwayPattern} ${displayHomePattern}${fbText}${bbText} ${resText} ${displayScoreStr}`;
-        
+        if (result.team !== "none" && scoringTeam) resText = `${getCleanTeamName(scoringTeam)} ${resultDisplayName}`;
+        let mainMsg     = `${displayAwayPattern} ${displayHomePattern}${fbText}${bbText} ${resText} ${displayScoreStr}`;
         const qEndScore = config.targetScore;
         const qEndSong  = config.quarterMaxSongs;
         const isQEnd    = match.quarterScore.away >= qEndScore || match.quarterScore.home >= qEndScore || match.songInQuarter >= qEndSong;

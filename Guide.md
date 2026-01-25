@@ -1,4 +1,4 @@
-# NBA Mode v0-beta.1.2
+# NBA Mode v0-beta.1.3
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
@@ -144,17 +144,18 @@ In very simple terms: *just answer as correctly and as quickly as you can*
 ### Format Change
 - Subsumed `Rebound` under `Turnover`
 ### Script Changes
-- Fixed queue management for fast break logic
+- Fixed queue management for Fast Break logic
 - Fixed display swap for HTML output
 - Fixed duplicate messages from multiple script holders
+- Reflected Fast Break bonus in generated pattern and HTML output
 
 ## Lineup: Away And Home, Captains
-The team listed first (above) on Challonge is the **Away** team for each series. Line up as follows before each series: **Away** (Slots 1-4: T1, T2, T3, T4), then **Home** (Slots 5-8: T1, T2, T3, T4). The T1 of each team is also designated as their **Captain**, which carries a **+1 multiplier** for their correct guesses. There is **no need to swap** Slots between consecutive games; the Script does that **automatically**. 
+The team listed first (above) on Challonge is the **Away** team for each series. Line up as follows before each series: **Away** (Slots 1-4: T1, T2, T3, T4), then **Home** (Slots 5-8: T1, T2, T3, T4). The T1 of each team is also designated as their **Captain**, which carries a **+1 bonus** for their correct guesses. There is **no need to swap** Slots between consecutive games; the Script does that **automatically**. 
  
 ## Score: Check The TDIFF
 <details>
     <summary><b>Click to know more about Scoring</b></summary>
-    <p>The <b>Away</b> team attacks (has <b>possession</b>) first to start <b>odd</b>-numbered quarters and vice-versa. Possession <b>swaps</b> after every song <b>except</b> after a <code>Slam Dunk</code> or between Quarters. Players who got <b>≥3</b> songs right in a row is on a <b>Hot Streak</b>, and their correct guesses has a <b>+1 multiplier</b> for TDIFF calculations. <b>After</b> multipliers have been applied, if <b>both</b> teams have <b>≥1</b> player(s) that got the same song right, the <b>fastest</b> player to do so gets <b>+1</b> for their team's TDIFF calculations. To calculate points, subtract the Defending team’s score from the Attacking team’s score. Point-scoring plays are worth <b>+1</b> point in Song <b>10</b> of each Quarter. 
+    <p>The <b>Away</b> team attacks (has <b>possession</b>) first to start <b>odd</b>-numbered quarters and vice-versa. Possession <b>swaps</b> after every song <b>except</b> after a <code>Slam Dunk</code> or between Quarters. Players who got <b>≥3</b> songs right in a row is on a <b>Hot Streak</b>, and their correct guesses has a <b>+1 bonus</b> for TDIFF calculations. If <b>both</b> teams have <b>≥1</b> player(s) that got the same song right, the <b>fastest</b> player to do so gets a <b>+1 bonus</b> for their team's TDIFF calculations. To calculate points, subtract the Defending team’s score from the Attacking team’s score. Point-scoring plays are worth <b>+1 point</b> (not TDIFF bonus) in Song <b>10</b> of each Quarter. 
 </details>
 
 <table style="text-align:center">

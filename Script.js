@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-beta.1.3
+// @version      0-beta.1.4
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -325,7 +325,7 @@
             let total = 0;
             history.forEach(row => {
                 const arr = side === 'away' ? row.awayArr : row.homeArr;
-                targetIndices.forEach(idx => {if (val > 0) total += arr[idx]});
+                targetIndices.forEach(idx => {if (arr[idx] > 0) total += arr[idx]});
             });
             return total;
         };
@@ -605,7 +605,7 @@
             song    : match.songInQuarter,
             poss    : prevPoss,
             result  : resultDisplayName,
-            score   : displayScoreStr,
+            score   : `${match.totalScore.away}-${match.totalScore.home}`,
             awayArr : awayStats.values,
             homeArr : homeStats.values
         });
@@ -643,19 +643,20 @@
             }
         }
 
-        const leftName      = effSwapped ? config.teamNames.home : config.teamNames.away;
-        const rightName     = effSwapped ? config.teamNames.away : config.teamNames.home;
-        const safeLeft      = leftName.replace(/[^a-z0-9]/gi, '_');
-        const safeRight     = rightName.replace(/[^a-z0-9]/gi, '_');
-        const date          = new Date();
-        const yy            = String(date.getFullYear   ())     .slice      (2);
-        const mm            = String(date.getMonth      () + 1) .padStart   (2, '0');
-        const dd            = String(date.getDate       ())     .padStart   (2, '0');
-        const fileName      = `${yy}${mm}${dd}-${effGameNum}-${safeLeft}-${safeRight}.html`;
-        const lastEntry     = match.history[match.history.length - 1]; 
-        const displayScore  = lastEntry.score;
-        const titleStr      = `Game ${effGameNum} (${match.history.length}): ${leftName} ${displayScore} ${rightName}`;
-        const subHeaders    = gameConfig.posNames; 
+        const leftName              = effSwapped ? config.teamNames.home : config.teamNames.away;
+        const rightName             = effSwapped ? config.teamNames.away : config.teamNames.home;
+        const safeLeft              = leftName.replace(/[^a-z0-9]/gi, '_');
+        const safeRight             = rightName.replace(/[^a-z0-9]/gi, '_');
+        const date                  = new Date();
+        const yy                    = String(date.getFullYear   ())     .slice      (2);
+        const mm                    = String(date.getMonth      () + 1) .padStart   (2, '0');
+        const dd                    = String(date.getDate       ())     .padStart   (2, '0');
+        const fileName              = `${yy}${mm}${dd}-${effGameNum}-${safeLeft}-${safeRight}.html`;
+        const lastEntry             = match.history[match.history.length - 1]; 
+        const [rawAway, rawHome]    = lastEntry.score.split('-');
+        const titleScore            = `${rawAway}-${rawHome}`;
+        const titleStr              = `Game ${effGameNum} (${match.history.length}): ${leftName} ${titleScore} ${rightName}`;
+        const subHeaders            = gameConfig.posNames; 
 
         let html = `
         <html>
@@ -698,11 +699,11 @@
         match.history.forEach(row => {
             const possName                  = config.teamNames[row.poss]; 
             const generateCells             = (valuesArr) => {return valuesArr.map(val => {return `<td>${val === 0 ? "" : val}</td>`}).join('')};
-            const leftArr                   = effSwapped ? row.homeArr : row.awayArr;
-            const rightArr                  = effSwapped ? row.awayArr : row.homeArr;
+            const leftArr                   = row.awayArr;
+            const rightArr                  = row.homeArr;
             const awayCells                 = generateCells(leftArr);
             const homeCells                 = generateCells(rightArr);
-            const [leftScore, rightScore]   = row.score.split('-');
+            const [leftScore, rightScore]   = row.score.split('-'); 
 
             html += `<tr>`;
             if (!printedQ[row.q]) {

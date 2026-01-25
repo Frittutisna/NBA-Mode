@@ -1,4 +1,4 @@
-# NBA Mode v0-beta.1.3
+# NBA Mode v0-beta.1.4
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
@@ -144,7 +144,6 @@ In very simple terms: *just answer as correctly and as quickly as you can*
 ### Format Change
 - Subsumed `Rebound` under `Turnover`
 ### Script Changes
-- Fixed queue management for Fast Break logic
 - Fixed display swap for HTML output
 - Fixed duplicate messages from multiple script holders
 - Reflected Fast Break bonus in generated pattern and HTML output

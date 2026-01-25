@@ -486,7 +486,7 @@
                 if (resultsMap[pid]) {
                     const pObj = Object.values(quiz.players).find(p => p.gamePlayerId === pid);
                     if (pObj) {
-                        const isAway        = currentAwaySlots.includes(pObj.team);
+                        const isAway        = currentAwaySlots.includes(pObj.teamNumber);
                         fastBreakWinner     = isAway ? 'away' : 'home';
                         fastBreakPlayerName = pObj.name;
                         const targetStats   = isAway ? awayStats : homeStats;

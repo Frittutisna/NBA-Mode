@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-beta.1.0
+// @version      0-beta.1.2
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -74,8 +74,7 @@
         "3-pointer"         : "TDIFF = 4 or 3. Attacking Team gets 3 points. Possession swaps",
         "2-pointer"         : "TDIFF = 2 or 1. Attacking Team gets 2 points. Possession swaps",
         "free throw"        : "TDIFF = 0. Attacking Team gets 1 point. Possession swaps",
-        "rebound"           : "TDIFF = -1. No points awarded. Possession swaps",
-        "turnover"          : "TDIFF = -2. Defending Team gets 1 point. Possession swaps",
+        "turnover"          : "TDIFF = -1 or -2. Defending Team gets 1 point. Possession swaps",
         "block"             : "TDIFF = -3 or -4. Defending Team gets 2 points. Possession swaps",
         "steal"             : "TDIFF ≤ -5. Defending Team gets 3 points. Possession swaps",
         "buzzer beater"     : "On Song 10 of a Quarter, point-scoring plays are worth +1 point",
@@ -142,6 +141,25 @@
             if (p) return p.name;
         }
         return `Player ${teamId}`;
+    };
+
+    const getSelfSlot = () => {
+        if (playersCache.length > 0) {
+            const p = playersCache.find(p => p.name === selfName);
+            if (p) return p.teamNumber;
+        }
+
+        if (typeof quiz     !== 'undefined' && quiz     .inQuiz) {
+            const p = Object.values(quiz.players).find(p => p.name === selfName);
+            if (p) return p.teamNumber;
+        }
+
+        if (typeof lobby    !== 'undefined' && lobby    .inLobby) {
+            const p = Object.values(lobby.players).find(p => p.name === selfName);
+            if (p) return getTeamNumber(p);
+        }
+
+        return 0;
     };
 
     const updateLobbyName = (awayClean, homeClean) => {
@@ -486,8 +504,7 @@
         else if (tdiff >=   3)  result = {name: "3-Pointer",    pts: 3, swap: true,     team: "att"};
         else if (tdiff >=   1)  result = {name: "2-Pointer",    pts: 2, swap: true,     team: "att"};
         else if (tdiff ===  0)  result = {name: "Free Throw",   pts: 1, swap: true,     team: "att"};
-        else if (tdiff ===  -1) result = {name: "Rebound",      pts: 0, swap: true,     team: "none"};
-        else if (tdiff ===  -2) result = {name: "Turnover",     pts: 1, swap: true,     team: "def"};
+        else if (tdiff >=   -2) result = {name: "Turnover",     pts: 1, swap: true,     team: "def"};
         else if (tdiff >=   -4) result = {name: "Block",        pts: 2, swap: true,     team: "def"};
         else                    result = {name: "Steal",        pts: 3, swap: true,     team: "def"};
 
@@ -613,24 +630,27 @@
             return;
         }
 
-        const leftName  = config.isSwapped ? config.teamNames.home : config.teamNames.away;
-        const rightName = config.isSwapped ? config.teamNames.away : config.teamNames.home;
-        const safeLeft  = leftName.replace(/[^a-z0-9]/gi, '_');
-        const safeRight = rightName.replace(/[^a-z0-9]/gi, '_');
-        const date      = new Date();
-        const yy        = String(date.getFullYear   ())     .slice      (2);
-        const mm        = String(date.getMonth      () + 1) .padStart   (2, '0');
-        const dd        = String(date.getDate       ())     .padStart   (2, '0');
-        const fileName  = `${yy}${mm}${dd}-${match.gameNumber}-${safeLeft}-${safeRight}.html`;
-        const lastEntry = match.history[match.history.length - 1]; 
-
-        let displayScore = lastEntry.score;
-        if (config.isSwapped) {
-            const [s1, s2]  = lastEntry.score.split('-');
-            displayScore    = `${s2}-${s1}`;
+        let effGameNum = config.gameNumber;
+        let effSwapped = config.isSwapped;
+        if (!match.isActive) {
+            if (config.gameNumber !== match.gameNumber) {
+                effGameNum = match.gameNumber;
+                effSwapped = !config.isSwapped;
+            }
         }
 
-        const titleStr      = `Game ${match.gameNumber} (${match.history.length}): ${leftName} ${displayScore} ${rightName}`;
+        const leftName      = effSwapped ? config.teamNames.home : config.teamNames.away;
+        const rightName     = effSwapped ? config.teamNames.away : config.teamNames.home;
+        const safeLeft      = leftName.replace(/[^a-z0-9]/gi, '_');
+        const safeRight     = rightName.replace(/[^a-z0-9]/gi, '_');
+        const date          = new Date();
+        const yy            = String(date.getFullYear   ())     .slice      (2);
+        const mm            = String(date.getMonth      () + 1) .padStart   (2, '0');
+        const dd            = String(date.getDate       ())     .padStart   (2, '0');
+        const fileName      = `${yy}${mm}${dd}-${effGameNum}-${safeLeft}-${safeRight}.html`;
+        const lastEntry     = match.history[match.history.length - 1]; 
+        const displayScore  = lastEntry.score;
+        const titleStr      = `Game ${effGameNum} (${match.history.length}): ${leftName} ${displayScore} ${rightName}`;
         const subHeaders    = gameConfig.posNames; 
 
         let html = `
@@ -672,21 +692,13 @@
         const printedQ = {};
 
         match.history.forEach(row => {
-            let possName;
-            if (config.isSwapped)   possName = row.poss === 'away' ? config.teamNames.home : config.teamNames.away;
-            else                    possName = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
-            
-            const generateCells = (valuesArr) => {return valuesArr.map(val => {return `<td>${val === 0 ? "" : val}</td>`}).join('');};
-            const leftArr       = row.awayArr;
-            const rightArr      = row.homeArr;
-            const awayCells     = generateCells(leftArr);
-            const homeCells     = generateCells(rightArr);
-            const [
-                scoreStaticAway, 
-                scoreStaticHome
-            ]                   = row.score.split('-').map(Number);
-            const leftScore     = config.isSwapped ? scoreStaticHome : scoreStaticAway;
-            const rightScore    = config.isSwapped ? scoreStaticAway : scoreStaticHome;
+            const possName                  = config.teamNames[row.poss]; 
+            const generateCells             = (valuesArr) => {return valuesArr.map(val => {return `<td>${val === 0 ? "" : val}</td>`}).join('')};
+            const leftArr                   = effSwapped ? row.homeArr : row.awayArr;
+            const rightArr                  = effSwapped ? row.awayArr : row.homeArr;
+            const awayCells                 = generateCells(leftArr);
+            const homeCells                 = generateCells(rightArr);
+            const [leftScore, rightScore]   = row.score.split('-');
 
             html += `<tr>`;
             if (!printedQ[row.q]) {
@@ -754,16 +766,19 @@
 
                     if (publicCommands.includes(cmd)) {
                         setTimeout(() => {
-                            if (cmd === "whatis") {
-                                if (!arg || arg === "help") chatMessage("Available terms: " + Object.keys(TERMS).sort().join(", "));
-                                else {
-                                    if (TERMS[arg])         chatMessage(`${arg}: ${TERMS[arg]}`);
-                                    else                    chatMessage(`Unknown term '${arg}'.`);
+                            const mySlot = getSelfSlot();
+                            if (config.hostId !== 0 && config.hostId === mySlot) {
+                                if (cmd === "whatis") {
+                                    if (!arg || arg === "help") chatMessage("Available terms: " + Object.keys(TERMS).sort().join(", "));
+                                    else {
+                                        if (TERMS[arg])         chatMessage(`${arg}: ${TERMS[arg]}`);
+                                        else                    chatMessage(`Unknown term '${arg}'.`);
+                                    }
                                 }
+                                else if (cmd === "help")        printHelp(arg || null);
+                                else if (cmd === "flowchart")   chatMessage(`Flowchart: ${config.links.flowchart}`);
+                                else if (cmd === "guide")       chatMessage(`Guide: ${config.links.guide}`);
                             }
-                            else if (cmd === "help")        printHelp(arg || null);
-                            else if (cmd === "flowchart")   chatMessage(`Flowchart: ${config.links.flowchart}`);
-                            else if (cmd === "guide")       chatMessage(`Guide: ${config.links.guide}`);
                         }, config.delay);
 
                         return;

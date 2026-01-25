@@ -1,10 +1,11 @@
-# NBA Mode v0-beta.0.2
+# NBA Mode v0-beta.1.0
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
 - [Links: Balancer, Flowchart, Script](#links-balancer-flowchart-script)
 - [Overview: Those Long Setting Codes](#overview-those-long-setting-codes)
 - [Comparison: What's The Difference?](#comparison-whats-the-difference)
+- [Changelog: What Changed From v0-beta.0?](#changelog-what-changed-from-v0-beta0)
 - [Lineup: Away And Home, Captains](#lineup-away-and-home-captains)
 - [Score: Check The TDIFF](#score-check-the-tdiff)
 - [Ending: Elam, Tiebreaker](#ending-elam-tiebreaker)
@@ -138,6 +139,11 @@ In very simple terms: *just answer as correctly and as quickly as you can*
         <tr><td style="text-align:center">Tie</td></tr>
     </tbody>
 </table>
+
+## Changelog: What Changed From v0-beta.0?
+### Script Changes
+- Fixed queue management for fast break logic
+- Fixed display swap for HTML output
 
 ## Lineup: Away And Home, Captains
 The team listed first (above) on Challonge is the **Away** team for each series. Line up as follows before each series: **Away** (Slots 1-4: T1, T2, T3, T4), then **Home** (Slots 5-8: T1, T2, T3, T4). The T1 of each team is also designated as their **Captain**, which carries a **+1 multiplier** for their correct guesses. There is **no need to swap** Slots between consecutive games; the Script does that **automatically**. 

@@ -613,19 +613,24 @@
             return;
         }
 
-        const awayNameClean = config.teamNames.away;
-        const homeNameClean = config.teamNames.home;
-        
-        const date  = new Date();
-        const yy    = String(date.getFullYear   ())     .slice      (2);
-        const mm    = String(date.getMonth      () + 1) .padStart   (2, '0');
-        const dd    = String(date.getDate       ())     .padStart   (2, '0');
-        
-        const safeAway      = awayNameClean.replace(/[^a-z0-9]/gi, '_');
-        const safeHome      = homeNameClean.replace(/[^a-z0-9]/gi, '_');
-        const fileName      = `${yy}${mm}${dd}-${match.gameNumber}-${safeAway}-${safeHome}.html`;
-        const lastEntry     = match.history[match.history.length - 1];        
-        const titleStr      = `Game ${match.gameNumber} (${match.history.length}): ${awayNameClean} ${lastEntry.score} ${homeNameClean}`;
+        const leftName  = config.isSwapped ? config.teamNames.home : config.teamNames.away;
+        const rightName = config.isSwapped ? config.teamNames.away : config.teamNames.home;
+        const safeLeft  = leftName.replace(/[^a-z0-9]/gi, '_');
+        const safeRight = rightName.replace(/[^a-z0-9]/gi, '_');
+        const date      = new Date();
+        const yy        = String(date.getFullYear   ())     .slice      (2);
+        const mm        = String(date.getMonth      () + 1) .padStart   (2, '0');
+        const dd        = String(date.getDate       ())     .padStart   (2, '0');
+        const fileName  = `${yy}${mm}${dd}-${match.gameNumber}-${safeLeft}-${safeRight}.html`;
+        const lastEntry = match.history[match.history.length - 1]; 
+
+        let displayScore = lastEntry.score;
+        if (config.isSwapped) {
+            const [s1, s2]  = lastEntry.score.split('-');
+            displayScore    = `${s2}-${s1}`;
+        }
+
+        const titleStr      = `Game ${match.gameNumber} (${match.history.length}): ${leftName} ${displayScore} ${rightName}`;
         const subHeaders    = gameConfig.posNames; 
 
         let html = `
@@ -647,16 +652,16 @@
                         <th rowspan="2">Quarter</th>
                         <th rowspan="2">Song</th>
                         <th rowspan="2">Possession</th>
-                        <th colspan="4">${awayNameClean}</th>
-                        <th colspan="4">${homeNameClean}</th>
+                        <th colspan="4">${leftName}</th>
+                        <th colspan="4">${rightName}</th>
                         <th rowspan="2">Result</th>
                         <th colspan="2">Score</th>
                     </tr>
                     <tr>
                         ${subHeaders.map(h => `<th>${h}</th>`).join('')}
                         ${subHeaders.map(h => `<th>${h}</th>`).join('')}
-                        <th>${awayNameClean}</th>
-                        <th>${homeNameClean}</th>
+                        <th>${leftName}</th>
+                        <th>${rightName}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -671,12 +676,17 @@
             if (config.isSwapped)   possName = row.poss === 'away' ? config.teamNames.home : config.teamNames.away;
             else                    possName = row.poss === 'away' ? config.teamNames.away : config.teamNames.home;
             
-            const generateCells             = (valuesArr) => {return valuesArr.map(val => {return `<td>${val === 0 ? "" : val}</td>`}).join('');};
-            const leftArr                   = config.isSwapped ? row.homeArr : row.awayArr;
-            const rightArr                  = config.isSwapped ? row.awayArr : row.homeArr;
-            const awayCells                 = generateCells(leftArr);
-            const homeCells                 = generateCells(rightArr);
-            const [scoreAway, scoreHome]    = row.score.split('-').map(Number);
+            const generateCells = (valuesArr) => {return valuesArr.map(val => {return `<td>${val === 0 ? "" : val}</td>`}).join('');};
+            const leftArr       = row.awayArr;
+            const rightArr      = row.homeArr;
+            const awayCells     = generateCells(leftArr);
+            const homeCells     = generateCells(rightArr);
+            const [
+                scoreStaticAway, 
+                scoreStaticHome
+            ]                   = row.score.split('-').map(Number);
+            const leftScore     = config.isSwapped ? scoreStaticHome : scoreStaticAway;
+            const rightScore    = config.isSwapped ? scoreStaticAway : scoreStaticHome;
 
             html += `<tr>`;
             if (!printedQ[row.q]) {
@@ -689,8 +699,8 @@
                     ${awayCells}
                     ${homeCells}
                     <td>${row.result}</td>
-                    <td>${scoreAway}</td>
-                    <td>${scoreHome}</td>
+                    <td>${leftScore}</td>
+                    <td>${rightScore}</td>
                 </tr>`;
         });
         html += `</tbody></table></body></html>`;
@@ -819,12 +829,12 @@
 
         new Listener("player answers", (payload) => {
             if (!match.isActive) return;
-
             payload.answers.forEach(ans => {
-                if (!match.answerQueue.includes(ans.gamePlayerId)) {
-                    match.answerQueue.push(ans.gamePlayerId);
-                }
+                const idx =     match.answerQueue.indexOf   (ans.gamePlayerId);
+                if (idx > -1)   match.answerQueue.splice    (idx, 1);
+                                match.answerQueue.push      (ans.gamePlayerId);
             });
+            console.log("Queue: ", match.answerQueue);
         }).bindListener();
 
         new Listener("play next song", () => {

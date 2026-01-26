@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-beta.1.4
+// @version      0-beta.1.5
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -482,16 +482,17 @@
         let fastBreakPlayerName = "";
 
         if (awayStats.correctCount > 0 && homeStats.correctCount > 0) {
-            for (const pid of match.answerQueue) {
-                if (resultsMap[pid]) {
+            for (const slotId of match.answerQueue) {
+                const pid = getPlayerId(slotId);
+                if (pid != null && resultsMap[pid]) {
                     const pObj = Object.values(quiz.players).find(p => p.gamePlayerId === pid);
                     if (pObj) {
-                        const isAway        = currentAwaySlots.includes(pObj.teamNumber);
+                        const isAway        = currentAwaySlots.includes(slotId);
                         fastBreakWinner     = isAway ? 'away' : 'home';
                         fastBreakPlayerName = pObj.name;
                         const targetStats   = isAway ? awayStats : homeStats;
                         const targetSlots   = isAway ? currentAwaySlots : currentHomeSlots;
-                        const slotIndex     = targetSlots.findIndex(slotId => getPlayerId(slotId) === pid);
+                        const slotIndex     = targetSlots.indexOf(slotId);
                         if (slotIndex !== -1) {
                             targetStats.values[slotIndex]   +=  1;
                             targetStats.sum                 +=  1;
@@ -847,13 +848,21 @@
             if (match.isActive) setTimeout(() => processRound(payload), config.delay);
         }).bindListener();
 
-        new Listener("player answers", (payload) => {
+        new Listener("player answered", (payload) => {
             if (!match.isActive) return;
-            payload.answers.forEach(ans => {
-                const idx =     match.answerQueue.indexOf   (ans.gamePlayerId);
-                if (idx > -1)   match.answerQueue.splice    (idx, 1);
-                                match.answerQueue.push      (ans.gamePlayerId);
+            payload.forEach(event => {
+                event.gamePlayerIds.forEach(id => {
+                    const player = Object.values(quiz.players).find(p => p.gamePlayerId === id);
+                    if (player) {
+                        const slotId = player.teamNumber; 
+
+                        const idx =     match.answerQueue.indexOf   (slotId);
+                        if (idx > -1)   match.answerQueue.splice    (idx, 1);
+                                        match.answerQueue.push      (slotId);
+                    }
+                });
             });
+            // console.log('Queue: ', match.answerQueue);
         }).bindListener();
 
         new Listener("play next song", () => {

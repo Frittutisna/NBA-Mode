@@ -1,4 +1,4 @@
-# NBA Mode v0-beta.1.4
+# NBA Mode v0-beta.1.5
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
@@ -147,6 +147,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*
 - Fixed display swap for HTML output
 - Fixed duplicate messages from multiple script holders
 - Reflected Fast Break bonus in generated pattern and HTML output
+- Fixed queue management for Fast Break logic
 
 ## Lineup: Away And Home, Captains
 The team listed first (above) on Challonge is the **Away** team for each series. Line up as follows before each series: **Away** (Slots 1-4: T1, T2, T3, T4), then **Home** (Slots 5-8: T1, T2, T3, T4). The T1 of each team is also designated as their **Captain**, which carries a **+1 bonus** for their correct guesses. There is **no need to swap** Slots between consecutive games; the Script does that **automatically**. 

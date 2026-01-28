@@ -1,8 +1,8 @@
-# NBA Mode v0-beta.1.6
+# NBA Mode v0-beta.1.7
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
-- [Links: Balancer, Flowchart, Script](#links-balancer-flowchart-script)
+- [Links: Balancer, Flowchart, PowerPoint, Script](#links-balancer-flowchart-powerpoint-script)
 - [Overview: Those Long Setting Codes](#overview-those-long-setting-codes)
 - [Comparison: What's The Difference?](#comparison-whats-the-difference)
 - [Changelog: What Changed From v0-beta.0?](#changelog-what-changed-from-v0-beta0)
@@ -17,14 +17,15 @@ In very simple terms: *just answer as correctly and as quickly as you can*
 - If you're **just playing**: Join the right lobby, line up correctly, and click Ready. If you're confused about anything, you can (in order of priority):
     - Just play along. People often say this is a game mode best understood through playing, not reading
     - Try `/nba help` or `/nba whatIs` in the chat, or
-    - Read further
+    - Read the [PowerPoint](#links-balancer-flowchart-powerpoint-script)
 - If you're **just watching**: Grab a bowl of popcorn before spectating the lobby of your choice.
 - **Unless you have to, feel more than welcome to stop reading this guide here.** I promise you, unless you **really** have to, you **shouldn't** read the rest of this guide.
 - If you're **hosting the tour** or **hosting a lobby** for your team, see [Manual: What Do I *Really* Do?](#manual-what-do-i-really-do).
 
-## Links: Balancer, Flowchart, Script
+## Links: Balancer, Flowchart, PowerPoint, Script
 - [Link to the Balancer](https://github.com/Frittutisna/Balancer)
 - [Link to the Flowchart](https://github.com/Frittutisna/NBA-Mode/blob/main/Flowchart/Flowchart.pdf)
+- [Link to the PowerPoint](https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/PowerPoint.pdf)
 - [Link to the Script](https://github.com/Frittutisna/NBA-Mode/blob/main/Script.js)
 
 ## Overview: Those Long Setting Codes
@@ -225,7 +226,7 @@ The script will automatically swap Away and Home teams between consecutive games
 ## Manual: What Do I *Really* Do?
 ### If you're hosting the tour:
 - Open the tour signup prompt and ask for team requests and/or blacklists.
-- After the player list has been settled, find the [Balancer](#links-balancer-flowchart-script) and follow the instructions there.
+- After the player list has been settled, find the [Balancer](#links-balancer-flowchart-powerpoint-script) and follow the instructions there.
 - If the tour has ≥4 teams, ask for 1 lobby host volunteer from each team.
 - Read the [Format](#format-best-of-7-round-robin-knockouts) section and prepare the Challonge.
 - Announce team compositions, as well as Challonge and lobby links.
@@ -234,7 +235,7 @@ The script will automatically swap Away and Home teams between consecutive games
 - Announce the final results.
 
 ### If you're hosting a lobby for your team:
-Install the [Script](#links-balancer-flowchart-script) (**only** the lobby host needs to install and operate the **Script**) on your browser through TamperMonkey, then do the following:
+Install the [Script](#links-balancer-flowchart-powerpoint-script) (**only** the lobby host needs to install and operate the **Script**) on your browser through TamperMonkey, then do the following:
 - Apply the **Regulation** setting code (see [Overview](#overview-those-long-setting-codes)).
 - Invite the right players to the lobby, make sure they're lined up correctly (see [Lineup](#lineup-away-and-home-captains)), then type `/nba howTo` and follow the instructions there.
 - After everyone is ready, type `/nba start` and start playing. If you started the game by mistake, type `/nba resetGame`, return to lobby, then type `/nba start` to restart.

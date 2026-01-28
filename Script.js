@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-beta.1.6
+// @version      0-beta.1.7
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -27,7 +27,8 @@
         seriesStats         : {awayWins: 0, homeWins: 0, history: []},
         links               : {
             guide           : "https://github.com/Frittutisna/NBA-Mode/blob/main/Guide.md",
-            flowchart       : "https://github.com/Frittutisna/NBA-Mode/blob/main/Flowchart/Flowchart.pdf"
+            flowchart       : "https://github.com/Frittutisna/NBA-Mode/blob/main/Flowchart/Flowchart.pdf",
+            powerpoint      : "https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/PowerPoint.pdf"
         },
         selectors           : {
             playIcon        : "fa-play-circle",
@@ -86,6 +87,7 @@
         "export"            : "Download the HTML scoresheet",
         "flowchart"         : "Show link to the flowchart",
         "guide"             : "Show link to the guide",
+        "powerpoint"        : "Show link to the PowerPoint",
         "howTo"             : "Show the step-by-step setup tutorial",
         "resetEverything"   : "Wipe everything and reset to default",
         "resetGame"         : "Wipe game progress and stop tracker",
@@ -768,7 +770,7 @@
                     const cmd               = parts[1] ? parts[1].toLowerCase() : "help";
                     const arg               = parts.slice(2).join(" ").toLowerCase();
                     const isHost            = (msg.sender === selfName);
-                    const publicCommands    = ["flowchart", "guide", "help", "whatis"];
+                    const publicCommands    = ["flowchart", "guide", "powerpoint", "help", "whatis"];
 
                     if (publicCommands.includes(cmd)) {
                         setTimeout(() => {
@@ -784,6 +786,7 @@
                                 else if (cmd === "help")        printHelp(arg || null);
                                 else if (cmd === "flowchart")   chatMessage(`Flowchart: ${config.links.flowchart}`);
                                 else if (cmd === "guide")       chatMessage(`Guide: ${config.links.guide}`);
+                                else if (cmd === "powerpoint")  chatMessage(`PowerPoint: ${config.links.powerpoint}`);
                             }
                         }, config.delay);
 

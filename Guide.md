@@ -1,4 +1,4 @@
-# NBA Mode v0-beta.1.7
+# NBA Mode v0-rc.0.0
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
@@ -41,7 +41,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*
     </tr>
     <tr>
         <td style="text-align:center">Regulation</td>
-        <td style="text-align:center">1.5 hours</td>
+        <td style="text-align:center">75 minutes</td>
         <td style="text-align:center">12-40</td>
         <td style="text-align:center">10</td>
         <td style="text-align:center">0-40</td>
@@ -72,9 +72,9 @@ In very simple terms: *just answer as correctly and as quickly as you can*
     <tbody>
         <tr>
             <td style="text-align:center">Estimated Runtime</td>
-            <td style="text-align:center">2 hours</td>
-            <td style="text-align:center">1.5 hours</td>
-            <td style="text-align:center" colspan="2">1 hour</td>
+            <td style="text-align:center">90 minutes</td>
+            <td style="text-align:center">75 minutes</td>
+            <td style="text-align:center" colspan="2">60 minutes</td>
         </tr>
         <tr>
             <td style="text-align:center">Song Count</td>

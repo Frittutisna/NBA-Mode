@@ -28,7 +28,8 @@
         links               : {
             guide           : "https://github.com/Frittutisna/NBA-Mode/blob/main/Guide.md",
             flowchart       : "https://github.com/Frittutisna/NBA-Mode/blob/main/Flowchart/Flowchart.pdf",
-            powerpoint      : "https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/PowerPoint.pdf"
+            powerpoint      : "https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/PowerPoint.pdf",
+            playerCard      : "https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/Player.png"
         },
         selectors           : {
             playIcon        : "fa-play-circle",
@@ -88,6 +89,7 @@
         "flowchart"         : "Show link to the flowchart",
         "guide"             : "Show link to the guide",
         "powerpoint"        : "Show link to the PowerPoint",
+        "playerCard"        : "Show link to the Player Card",
         "howTo"             : "Show the step-by-step setup tutorial",
         "resetEverything"   : "Wipe everything and reset to default",
         "resetGame"         : "Wipe game progress and stop tracker",
@@ -770,7 +772,7 @@
                     const cmd               = parts[1] ? parts[1].toLowerCase() : "help";
                     const arg               = parts.slice(2).join(" ").toLowerCase();
                     const isHost            = (msg.sender === selfName);
-                    const publicCommands    = ["flowchart", "guide", "powerpoint", "help", "whatis"];
+                    const publicCommands    = ["flowchart", "guide", "powerpoint", "playercard", "help", "whatis"];
 
                     if (publicCommands.includes(cmd)) {
                         setTimeout(() => {
@@ -787,6 +789,7 @@
                                 else if (cmd === "flowchart")   chatMessage(`Flowchart: ${config.links.flowchart}`);
                                 else if (cmd === "guide")       chatMessage(`Guide: ${config.links.guide}`);
                                 else if (cmd === "powerpoint")  chatMessage(`PowerPoint: ${config.links.powerpoint}`);
+                                else if (cmd === "playercard")  chatMessage(`Player Card: ${config.links.playerCard}`);
                             }
                         }, config.delay);
 

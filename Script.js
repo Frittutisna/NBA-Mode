@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.1.0
+// @version      0-rc.1.a
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -29,7 +29,8 @@
             guide           : "https://github.com/Frittutisna/NBA-Mode/blob/main/Guide.md",
             flowchart       : "https://github.com/Frittutisna/NBA-Mode/blob/main/Flowchart/Flowchart.pdf",
             powerpoint      : "https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/PowerPoint.pdf",
-            playerCard      : "https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/Player.png"
+            playerCard      : "https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/Player.png",
+            exampleCard     : "https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/Example.png"
         },
         selectors           : {
             playIcon        : "fa-play-circle",
@@ -90,6 +91,7 @@
         "guide"             : "Show link to the guide",
         "powerpoint"        : "Show link to the PowerPoint",
         "playerCard"        : "Show link to the Player Card",
+        "exampleCard"       : "Show link to the Example Card",
         "howTo"             : "Show the step-by-step setup tutorial",
         "resetEverything"   : "Wipe everything and reset to default",
         "resetGame"         : "Wipe game progress and stop tracker",
@@ -374,9 +376,8 @@
                 let remaining = msg;
                 while (remaining.length > 0) {
                     if (remaining.length <= LIMIT) {this.queue.push({msg: remaining, isSystem}); break}
-                    let splitIndex  = -1;
-                    
-                    let idx = remaining.lastIndexOf('|', LIMIT);
+                    let splitIndex  = -1;                    
+                    let idx         = remaining.lastIndexOf('|', LIMIT);
                     if (idx !== -1) splitIndex = idx;
                     else {
                         idx = remaining.lastIndexOf('.', LIMIT);
@@ -394,16 +395,18 @@
 
                     let cutEnd      = 0;
                     let nextStart   = 0;
-
-                    if (splitIndex  === LIMIT) {
-                        cutEnd      =   LIMIT;
-                        nextStart   =   LIMIT;
+                    if (splitIndex === LIMIT) {
+                        cutEnd     = LIMIT;
+                        nextStart  = LIMIT;
                     } else {
                         const char = remaining[splitIndex];
-
                         if (char === ' ') {
                             cutEnd      = splitIndex;
                             nextStart   = splitIndex + 1;
+                        } else if (char === '|') {
+                            cutEnd      = splitIndex + 1;
+                            nextStart   = splitIndex + 1;
+                            if (nextStart < remaining.length && remaining[nextStart] === ' ') nextStart++;
                         } else {
                             cutEnd      = splitIndex + 1;
                             nextStart   = splitIndex + 1;
@@ -424,8 +427,8 @@
             this.isProcessing   = true;
             const item          = this.queue.shift();
 
-            if      (item.isSystem)                 {if (typeof gameChat !== 'undefined') gameChat.systemMessage(item.msg)} 
-            else if (typeof socket !== 'undefined') {
+            if      (typeof gameChat    !== 'undefined' && item.isSystem) gameChat.systemMessage(item.msg);
+            else if (typeof socket      !== 'undefined') {
                 socket.sendCommand({
                     type    : "lobby",
                     command : "game chat message",
@@ -996,7 +999,7 @@
                     const cmd               = parts[1] ? parts[1].toLowerCase() : "help";
                     const arg               = parts.slice(2).join(" ").toLowerCase();
                     const isHost            = (msg.sender === selfName);
-                    const publicCommands    = ["flowchart", "guide", "powerpoint", "playercard", "help", "whatis"];
+                    const publicCommands    = ["flowchart", "guide", "powerpoint", "playercard", "examplecard", "help", "whatis"];
 
                     if (publicCommands.includes(cmd)) {
                         setTimeout(() => {
@@ -1014,6 +1017,7 @@
                                 else if (cmd === "guide")       chatMessage(`Guide: ${config.links.guide}`);
                                 else if (cmd === "powerpoint")  chatMessage(`PowerPoint: ${config.links.powerpoint}`);
                                 else if (cmd === "playercard")  chatMessage(`Player Card: ${config.links.playerCard}`);
+                                else if (cmd === "examplecard") chatMessage(`Example Card: ${config.links.exampleCard}`);
                             }
                         }, config.delay);
 

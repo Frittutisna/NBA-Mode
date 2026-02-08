@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.0.0
+// @version      0-rc.0.2
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -103,6 +103,174 @@
         "swap"              : "Swap Away and Home teams",
         "whatIs"            : "Explain a term (/nba whatIs [Term])"
     };
+
+    const litterboxUrl = "https://litterbox.catbox.moe/resources/internals/api.php";
+
+    function uploadToLitterbox(blob) {
+        return new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append("reqtype",      "fileupload");
+            formData.append("time",         "1h");
+            formData.append("fileToUpload", blob,           "scorebug.png");
+
+            fetch(litterboxUrl, {
+                method  : "POST",
+                body    : formData
+            })  .then(res => res.text())
+                .then(text => {
+                    if (text.startsWith("https"))   resolve(text);
+                    else                            reject("Upload Failed: " + text);
+                })
+                .catch(err => reject(err));
+        });
+    }
+
+    function drawScorebug(lastResultName, scoringTeam, nextPossession) {
+        return new Promise((resolve) => {
+            const canvas    = document.createElement('canvas');
+            canvas.width    = 800;
+            canvas.height   = 500;
+            const ctx       = canvas.getContext('2d');
+
+            const topSide   = 'away';
+            const botSide   = 'home';
+            const topName   = config.teamNames.away.substring(0, 3).toUpperCase();
+            const botName   = config.teamNames.home.substring(0, 3).toUpperCase();
+            const topScore  = match.totalScore.away;
+            const botScore  = match.totalScore.home;
+            
+            const topSlots  = config.isSwapped ? gameConfig.homeSlots : gameConfig.awaySlots;
+            const botSlots  = config.isSwapped ? gameConfig.awaySlots : gameConfig.homeSlots;
+
+            const cBlue     = '#0D5685';
+            const cOrange   = '#E7692B';
+            const cBlack    = '#000000';
+            const cWhite    = '#FFFFFF';
+            const cGold     = '#FFCC00';
+            const cGray     = '#333333';
+            
+            ctx.fillStyle = cWhite;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const gap   = 10;
+            const col1W = 390;
+            const col2W = 190;
+            const col3W = 190;
+            
+            const rowH_Name = 120;
+            const rowH_Slot = 45;
+            
+            const drawText = (text, x, y, size, color, align = 'center', weight = 'bold') => {
+                ctx.fillStyle       = color;
+                ctx.font            = `${weight} ${size}px Arial`;
+                ctx.textAlign       = align;
+                ctx.textBaseline    = 'middle';
+                ctx.fillText(text, x, y);
+            };
+
+            const getPlayerId = (teamId) => {
+                const p = Object.values(quiz.players).find(x => x.teamNumber == teamId);
+                return p ? p.gamePlayerId : null;
+            };
+
+            ctx.fillStyle = cBlue;
+            ctx.fillRect(0, 0, col1W, rowH_Name);
+            drawText(topName, col1W / 2, rowH_Name / 2, 80, cWhite);
+
+            const slotW     = (col1W - (3 * gap)) / 4;
+            const slotY_Top = rowH_Name + gap;
+            
+            topSlots.forEach((slotId, idx) => {
+                ctx.fillStyle = cBlue;
+                ctx.fillRect((slotW + gap) * idx, slotY_Top, slotW, rowH_Slot);
+                
+                const pid   = getPlayerId(slotId);
+                const isCap = config.captains.includes(slotId);
+                const isHot = pid && match.streaks[pid] >= 3;
+                
+                const iconX = ((slotW + gap) * idx) + (slotW / 2);
+                const iconY = slotY_Top + (rowH_Slot / 2);
+
+                let         txt =   "";
+                if (isCap)  txt +=  "★";
+                if (isHot)  txt +=  "H";
+                drawText(txt, iconX, iconY, 30, cWhite);
+            });
+
+            const slotY_Bot = slotY_Top + rowH_Slot + gap;
+            const botNameY  = slotY_Bot + rowH_Slot + gap;
+            
+            botSlots.forEach((slotId, idx) => {
+                ctx.fillStyle = cOrange;
+                ctx.fillRect((slotW + gap) * idx, slotY_Bot, slotW, rowH_Slot);
+                 
+                const pid   = getPlayerId(slotId);
+                const isCap = config.captains.includes(slotId);
+                const isHot = pid && match.streaks[pid] >= 3;
+                
+                const iconX = ((slotW + gap) * idx) + (slotW / 2);
+                const iconY = slotY_Bot + (rowH_Slot / 2);
+
+                let         txt =   "";
+                if (isCap)  txt +=  "★";
+                if (isHot)  txt +=  "H";
+                drawText(txt, iconX, iconY, 30, cWhite);
+            });
+
+            ctx.fillStyle = cOrange;
+            ctx.fillRect(0, botNameY, col1W, rowH_Name);
+            drawText(botName, col1W / 2, botNameY + (rowH_Name / 2), 80, cWhite);
+
+            const scoreH = (botNameY + rowH_Name - gap) / 2;
+
+            ctx.fillStyle = cBlue;
+            ctx.fillRect(col1W + gap, 0, col2W, scoreH);
+            drawText(topScore, col1W + gap + (col2W / 2), scoreH / 2, 90, cWhite);
+
+            ctx.fillStyle = cOrange;
+            ctx.fillRect(col1W + gap, scoreH + gap, col2W, scoreH);
+            drawText(botScore, col1W + gap + (col2W / 2), scoreH + gap + (scoreH / 2), 90, cWhite);
+
+            const stateX            = col1W + gap + col2W + gap;
+            const mainContentHeight = botNameY + rowH_Name;
+            ctx.fillStyle           = cBlack;
+            ctx.fillRect(stateX, 0, col3W, mainContentHeight);
+
+            const arrowCX   = stateX + (col3W / 2);
+            const arrowCY   = 70;
+            const arrowSize = 30;
+            
+            ctx.beginPath();
+            if (nextPossession === topSide) {
+                ctx.moveTo(arrowCX,             arrowCY - arrowSize);
+                ctx.lineTo(arrowCX - arrowSize, arrowCY + arrowSize);
+                ctx.lineTo(arrowCX + arrowSize, arrowCY + arrowSize);
+                ctx.fillStyle = cGold;
+            } else {
+                ctx.moveTo(arrowCX,             arrowCY + arrowSize);
+                ctx.lineTo(arrowCX - arrowSize, arrowCY - arrowSize);
+                ctx.lineTo(arrowCX + arrowSize, arrowCY - arrowSize);
+                ctx.fillStyle = cWhite; 
+            }
+            ctx.fill();
+
+            drawText(`Q${match.quarter}`, arrowCX, mainContentHeight / 2, 70, cWhite);
+            drawText((match.songInQuarter + 1).toString(), arrowCX, mainContentHeight - 70, 70, cWhite);
+
+            const bannerY   = mainContentHeight + gap;
+            const bannerH   = 90;
+
+            let                             bannerColor = cGray;
+            if (scoringTeam === topSide)    bannerColor = cBlue;
+            if (scoringTeam === botSide)    bannerColor = cOrange;
+
+            ctx.fillStyle = bannerColor;
+            ctx.fillRect(0, bannerY, canvas.width, bannerH);
+            drawText(`Last: ${lastResultName}`, canvas.width / 2, bannerY + (bannerH / 2), 50, cWhite);
+
+            canvas.toBlob((blob) => {resolve(blob)});
+        });
+    }
 
     const parseBool = (val) => {
         if (typeof val === 'boolean') return val;
@@ -538,8 +706,8 @@
         const prevPoss = match.possession;
         if (result.swap) match.possession = match.possession === 'away' ? 'home' : 'away';
         
-        let displayAwayPattern  = awayStats.pattern;
-        let displayHomePattern  = homeStats.pattern;
+        let displayAwayPattern  = awayStats.sum;
+        let displayHomePattern  = homeStats.sum;
         let displayScoreStr     = `${match.totalScore.away}-${match.totalScore.home}`;
 
         if (config.isSwapped) {
@@ -553,7 +721,7 @@
         const bbText    = isBuzzerBeater        ? ` Buzzer Beater`                        : "";  
         let resText     = resultDisplayName;
         if (result.team !== "none" && scoringTeam) resText = `${getCleanTeamName(scoringTeam)} ${resultDisplayName}`;
-        let mainMsg     = `${displayAwayPattern} ${displayHomePattern}${fbText}${bbText} ${resText} ${displayScoreStr}`;
+        let mainMsg     = `${displayAwayPattern}-${displayHomePattern}${fbText}${bbText} ${resText} ${displayScoreStr}`;
         const qEndScore = config.targetScore;
         const qEndSong  = config.quarterMaxSongs;
         const isQEnd    = match.quarterScore.away >= qEndScore || match.quarterScore.home >= qEndScore || match.songInQuarter >= qEndSong;
@@ -601,6 +769,11 @@
             }).filter(name => name);
 
             if (hotPlayers.length > 0) suffixMsg += ` | Hot Streak: ${hotPlayers.join(", ")}`;
+
+            drawScorebug(resultDisplayName, scoringTeam, match.possession)
+                .then   (blob   => uploadToLitterbox(blob))
+                .then   (link   => chatMessage      (`Scorebug: ${link}`))
+                .catch  (err    => console.error    ("Scorebug Error: ", err));
         }
 
         chatMessage(mainMsg + suffixMsg);

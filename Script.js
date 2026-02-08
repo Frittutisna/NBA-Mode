@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.0.6
+// @version      0-rc.0.7
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -125,7 +125,7 @@
         });
     }
 
-    function drawScorebug(lastResultName, prevPoss, nextPoss, displayQ, displaySong, hotSlots) {
+    function drawScorebug(lastResultName, prevPoss, nextPoss, displayQ, displaySong, hotSlots, awayTarget, homeTarget) {
         return new Promise((resolve) => {
             const canvas    = document.createElement('canvas');
             canvas.width    = 800;
@@ -134,22 +134,18 @@
 
             let topNameStr  = config.teamNames.away;
             let botNameStr  = config.teamNames.home;
+            let topTarget   = awayTarget;
+            let botTarget   = homeTarget;
             
             if (config.isSwapped) {
                 topNameStr  = config.teamNames.home;
                 botNameStr  = config.teamNames.away;
+                topTarget   = homeTarget;
+                botTarget   = awayTarget;
             }
 
             const topName       = topNameStr.substring(0, 3).toUpperCase();
             const botName       = botNameStr.substring(0, 3).toUpperCase();
-
-            const topCurrent    = match.totalScore.away;
-            const topQScore     = match.quarterScore.away;
-            const topTarget     = (topCurrent - topQScore) + config.targetScore;
-
-            const botCurrent    = match.totalScore.home;
-            const botQScore     = match.quarterScore.home;
-            const botTarget     = (botCurrent - botQScore) + config.targetScore;
 
             const topDisplay    = `${topName} (${topTarget})`;
             const botDisplay    = `${botName} (${botTarget})`;
@@ -805,7 +801,15 @@
                 if (player) hotSlots.push(player.teamNumber);
             });
 
-            drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong, hotSlots)
+            let awayTarget = (match.totalScore.away - match.quarterScore.away) + config.targetScore;
+            let homeTarget = (match.totalScore.home - match.quarterScore.home) + config.targetScore;
+
+            if (isQEnd) {
+                awayTarget = match.totalScore.away + config.targetScore;
+                homeTarget = match.totalScore.home + config.targetScore;
+            }
+
+            drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong, hotSlots, awayTarget, homeTarget)
                 .then   (blob => uploadToLitterbox(blob))
                 .then   (link => chatMessage(mainMsg + suffixMsg + ` | Scorebug: ${link}`))
                 .catch  (err  => {

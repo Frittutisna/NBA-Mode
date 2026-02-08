@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.1.a
+// @version      0-rc.1.0
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -720,22 +720,17 @@
         const prevPoss = match.possession;
         if (result.swap) match.possession = match.possession === 'away' ? 'home' : 'away';
         
-        let displayAwayPattern  = awayStats.sum;
-        let displayHomePattern  = homeStats.sum;
-        let displayScoreStr     = `${match.totalScore.away}-${match.totalScore.home}`;
+        let attSum  = (prevPoss === 'away') ? awayStats.sum : homeStats.sum;
+        let defSum  = (prevPoss === 'away') ? homeStats.sum : awayStats.sum;
+        
+        let displayScoreStr = `${match.totalScore.away}-${match.totalScore.home}`;
+        if (config.isSwapped) displayScoreStr = `${match.totalScore.home}-${match.totalScore.away}`
 
-        if (config.isSwapped) {
-            displayScoreStr     = `${match.totalScore.home}-${match.totalScore.away}`;
-            const temp          = displayAwayPattern;
-            displayAwayPattern  = displayHomePattern;
-            displayHomePattern  = temp;
-        }
-
-        const fbText    = fastBreakWinner       ? ` (${fastBreakPlayerName} Fast Break)`  : "";
-        const bbText    = isBuzzerBeater        ? ` Buzzer Beater`                        : "";  
+        const fbText    = fastBreakWinner   ? ` (${fastBreakPlayerName} Fast Break)`    : "";
+        const bbText    = isBuzzerBeater    ? ` Buzzer Beater`                          : "";  
         let resText     = resultDisplayName;
         if (result.team !== "none" && scoringTeam) resText = `${getCleanTeamName(scoringTeam)} ${resultDisplayName}`;
-        let mainMsg     = `${displayAwayPattern}-${displayHomePattern}${fbText}${bbText} ${resText} ${displayScoreStr}`;
+        let mainMsg     = `${attSum}-${defSum}${fbText}${bbText} ${resText} ${displayScoreStr}`;
         const qEndScore = config.targetScore;
         const qEndSong  = config.quarterMaxSongs;
         const isQEnd    = match.quarterScore.away >= qEndScore || match.quarterScore.home >= qEndScore || match.songInQuarter >= qEndSong;

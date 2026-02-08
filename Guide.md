@@ -2,7 +2,7 @@
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
-- [Links: Balancer, Flowchart, PowerPoint, Script](#links-balancer-flowchart-many-others)
+- [Links: Balancer, Flowchart, Many Others](#links-balancer-flowchart-many-others)
 - [Overview: Those Long Setting Codes](#overview-those-long-setting-codes)
 - [Comparison: What's The Difference?](#comparison-whats-the-difference)
 - [Changelog: What Changed From v0-rc.0?](#changelog-what-changed-from-v0-rc0)
@@ -24,6 +24,7 @@ In very simple terms: *just answer as correctly and as quickly as you can*
 
 ## Links: Balancer, Flowchart, Many Others
 - [Link to the Balancer](https://github.com/Frittutisna/Balancer)
+- [Link to the Example Card](https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/Example.png)
 - [Link to the Flowchart](https://github.com/Frittutisna/NBA-Mode/blob/main/Flowchart/Flowchart.pdf)
 - [Link to the Player Card](https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/Player.png)
 - [Link to the PowerPoint](https://github.com/Frittutisna/NBA-Mode/blob/main/PowerPoint/PowerPoint.pdf)
@@ -143,9 +144,12 @@ In very simple terms: *just answer as correctly and as quickly as you can*
 </table>
 
 ## Changelog: What Changed From v0-rc.0?
+### PowerPoint Change
+- Added Example Card
 ### Script Changes
 - Added Scorebug
-- Changed song state report from `2111 2001` to `5-3`
+- Changed song state report from `2111 2002` to `5-4`
+- Changed song state report to list song outcome in `Attacking-Defending` order instead of `Away Home`
 
 ## Lineup: Away And Home, Captains
 The team listed first (above) on Challonge is the **Away** team for each series. Line up as follows before each series: **Away** (Slots 1-4: T1, T2, T3, T4), then **Home** (Slots 5-8: T1, T2, T3, T4). The T1 of each team is also designated as their **Captain**, which carries a **+1 bonus** for their correct guesses. There is **no need to swap** Slots between consecutive games; the Script does that **automatically**. 

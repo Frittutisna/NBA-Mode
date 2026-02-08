@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.0.2
-// @description  Script to track NBA Mode on AMQ
+// @version      0-rc.0.3
+// @description  Script to track NBA Mode on AMQ with Scorebug
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
 // ==/UserScript==
@@ -125,11 +125,11 @@
         });
     }
 
-    function drawScorebug(lastResultName, scoringTeam, nextPossession) {
+    function drawScorebug(lastResultName, prevPoss, nextPoss, displayQ, displaySong) {
         return new Promise((resolve) => {
             const canvas    = document.createElement('canvas');
             canvas.width    = 800;
-            canvas.height   = 500;
+            canvas.height   = 460;
             const ctx       = canvas.getContext('2d');
 
             const topSide   = 'away';
@@ -148,13 +148,14 @@
             const cWhite    = '#FFFFFF';
             const cGold     = '#FFCC00';
             const cGray     = '#333333';
+            const cDim      = '#AAAAAA';
             
             ctx.fillStyle = cWhite;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const gap   = 10;
-            const col1W = 390;
-            const col2W = 190;
+            const col1W = 395;
+            const col2W = 195;
             const col3W = 190;
             
             const rowH_Name = 120;
@@ -169,8 +170,12 @@
             };
 
             const getPlayerId = (teamId) => {
-                const p = Object.values(quiz.players).find(x => x.teamNumber == teamId);
-                return p ? p.gamePlayerId : null;
+                if (typeof quiz !== 'undefined' && quiz.players) {
+                    const p = Object.values(quiz.players).find(x => x.teamNumber == teamId);
+                    if (p) return p.gamePlayerId;
+                }
+                const pCache = playersCache.find(x => x.teamNumber == teamId);
+                return pCache ? pCache.gamePlayerId : null;
             };
 
             ctx.fillStyle = cBlue;
@@ -237,32 +242,36 @@
             ctx.fillRect(stateX, 0, col3W, mainContentHeight);
 
             const arrowCX   = stateX + (col3W / 2);
-            const arrowCY   = 70;
             const arrowSize = 30;
             
+            const upArrowY      = 50;
+            const qTextY        = 140;
+            const songTextY     = 220;
+            const downArrowY    = 310;
+
             ctx.beginPath();
-            if (nextPossession === topSide) {
-                ctx.moveTo(arrowCX,             arrowCY - arrowSize);
-                ctx.lineTo(arrowCX - arrowSize, arrowCY + arrowSize);
-                ctx.lineTo(arrowCX + arrowSize, arrowCY + arrowSize);
-                ctx.fillStyle = cGold;
-            } else {
-                ctx.moveTo(arrowCX,             arrowCY + arrowSize);
-                ctx.lineTo(arrowCX - arrowSize, arrowCY - arrowSize);
-                ctx.lineTo(arrowCX + arrowSize, arrowCY - arrowSize);
-                ctx.fillStyle = cWhite; 
-            }
+            ctx.moveTo(arrowCX,             upArrowY - arrowSize);
+            ctx.lineTo(arrowCX - arrowSize, upArrowY + arrowSize);
+            ctx.lineTo(arrowCX + arrowSize, upArrowY + arrowSize);
+            ctx.fillStyle = (nextPoss === topSide) ? cGold : cDim;
             ctx.fill();
 
-            drawText(`Q${match.quarter}`, arrowCX, mainContentHeight / 2, 70, cWhite);
-            drawText((match.songInQuarter + 1).toString(), arrowCX, mainContentHeight - 70, 70, cWhite);
+            drawText(`Q${displayQ}`, arrowCX, qTextY, 70, cWhite);
+            drawText(displaySong.toString(), arrowCX, songTextY, 70, cWhite);
 
-            const bannerY   = mainContentHeight + gap;
-            const bannerH   = 90;
+            ctx.beginPath();
+            ctx.moveTo(arrowCX,             downArrowY + arrowSize);
+            ctx.lineTo(arrowCX - arrowSize, downArrowY - arrowSize);
+            ctx.lineTo(arrowCX + arrowSize, downArrowY - arrowSize);
+            ctx.fillStyle = (nextPoss === botSide) ? cGold : cDim;
+            ctx.fill();
 
-            let                             bannerColor = cGray;
-            if (scoringTeam === topSide)    bannerColor = cBlue;
-            if (scoringTeam === botSide)    bannerColor = cOrange;
+            const bannerY = mainContentHeight + gap;
+            const bannerH = 90;
+
+            let                         bannerColor = cGray;
+            if (prevPoss === topSide)   bannerColor = cBlue;
+            if (prevPoss === botSide)   bannerColor = cOrange;
 
             ctx.fillStyle = bannerColor;
             ctx.fillRect(0, bannerY, canvas.width, bannerH);
@@ -770,13 +779,24 @@
 
             if (hotPlayers.length > 0) suffixMsg += ` | Hot Streak: ${hotPlayers.join(", ")}`;
 
-            drawScorebug(resultDisplayName, scoringTeam, match.possession)
-                .then   (blob   => uploadToLitterbox(blob))
-                .then   (link   => chatMessage      (`Scorebug: ${link}`))
-                .catch  (err    => console.error    ("Scorebug Error: ", err));
-        }
+            let displayQ    = match.quarter;
+            let displaySong = match.songInQuarter + 1;
+            let displayPoss = match.possession;
 
-        chatMessage(mainMsg + suffixMsg);
+            if (isQEnd) {
+                displayQ    = match.quarter + 1;
+                displaySong = 1;
+                displayPoss = (displayQ % 2 !== 0) ? 'away' : 'home';
+            }
+
+            drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong)
+                .then   (blob => uploadToLitterbox(blob))
+                .then   (link => chatMessage(mainMsg + suffixMsg + ` | Scorebug: ${link}`))
+                .catch  (err  => {
+                    console.error("Scorebug Error: ", err);
+                    chatMessage(mainMsg + suffixMsg);
+                });
+        } else chatMessage(mainMsg + suffixMsg);
 
         match.history.push({
             q       : match.quarter,

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.0.5
+// @version      0-rc.0.6
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -132,23 +132,42 @@
             canvas.height   = 460;
             const ctx       = canvas.getContext('2d');
 
-            const topSide   = 'away';
-            const botSide   = 'home';
-            const topName   = config.teamNames.away.substring(0, 3).toUpperCase();
-            const botName   = config.teamNames.home.substring(0, 3).toUpperCase();
-            const topScore  = match.totalScore.away;
-            const botScore  = match.totalScore.home;
+            let topNameStr  = config.teamNames.away;
+            let botNameStr  = config.teamNames.home;
             
-            const topSlots  = config.isSwapped ? gameConfig.homeSlots : gameConfig.awaySlots;
-            const botSlots  = config.isSwapped ? gameConfig.awaySlots : gameConfig.homeSlots;
+            if (config.isSwapped) {
+                topNameStr  = config.teamNames.home;
+                botNameStr  = config.teamNames.away;
+            }
 
-            const cBlue     = '#0D5685';
-            const cOrange   = '#E7692B';
-            const cBlack    = '#000000';
-            const cWhite    = '#FFFFFF';
-            const cGold     = '#FFCC00';
-            const cGray     = '#333333';
-            const cDim      = '#AAAAAA';
+            const topName       = topNameStr.substring(0, 3).toUpperCase();
+            const botName       = botNameStr.substring(0, 3).toUpperCase();
+
+            const topCurrent    = match.totalScore.away;
+            const topQScore     = match.quarterScore.away;
+            const topTarget     = (topCurrent - topQScore) + config.targetScore;
+
+            const botCurrent    = match.totalScore.home;
+            const botQScore     = match.quarterScore.home;
+            const botTarget     = (botCurrent - botQScore) + config.targetScore;
+
+            const topDisplay    = `${topName} (${topTarget})`;
+            const botDisplay    = `${botName} (${botTarget})`;
+
+            const topScore      = match.totalScore.away;
+            const botScore      = match.totalScore.home;
+            const topSide       = 'away';
+            const botSide       = 'home';
+            
+            const topSlots      = config.isSwapped ? gameConfig.homeSlots : gameConfig.awaySlots;
+            const botSlots      = config.isSwapped ? gameConfig.awaySlots : gameConfig.homeSlots;
+
+            const cBlue         = '#0D5685';
+            const cOrange       = '#E7692B';
+            const cBlack        = '#000000';
+            const cWhite        = '#FFFFFF';
+            const cGold         = '#FFCC00';
+            const cGray         = '#333333';
             
             ctx.fillStyle = cWhite;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -171,7 +190,7 @@
 
             ctx.fillStyle = cBlue;
             ctx.fillRect(0, 0, col1W, rowH_Name);
-            drawText(topName, col1W / 2, rowH_Name / 2, 80, cWhite);
+            drawText(topDisplay, col1W / 2, rowH_Name / 2, 70, cWhite);
 
             const slotW     = (col1W - (3 * gap)) / 4;
             const slotY_Top = rowH_Name + gap;
@@ -213,7 +232,7 @@
 
             ctx.fillStyle = cOrange;
             ctx.fillRect(0, botNameY, col1W, rowH_Name);
-            drawText(botName, col1W / 2, botNameY + (rowH_Name / 2), 80, cWhite);
+            drawText(botDisplay, col1W / 2, botNameY + (rowH_Name / 2), 70, cWhite);
 
             const scoreH = (botNameY + rowH_Name - gap) / 2;
 
@@ -242,7 +261,7 @@
             ctx.moveTo(arrowCX,             upArrowY - arrowSize);
             ctx.lineTo(arrowCX - arrowSize, upArrowY + arrowSize);
             ctx.lineTo(arrowCX + arrowSize, upArrowY + arrowSize);
-            ctx.fillStyle = (nextPoss === topSide) ? cGold : cDim;
+            ctx.fillStyle = (nextPoss === topSide) ? cGold : cWhite;
             ctx.fill();
 
             drawText(`Q${displayQ}`, arrowCX, qTextY, 70, cWhite);
@@ -252,7 +271,7 @@
             ctx.moveTo(arrowCX,             downArrowY + arrowSize);
             ctx.lineTo(arrowCX - arrowSize, downArrowY - arrowSize);
             ctx.lineTo(arrowCX + arrowSize, downArrowY - arrowSize);
-            ctx.fillStyle = (nextPoss === botSide) ? cGold : cDim;
+            ctx.fillStyle = (nextPoss === botSide) ? cGold : cWhite;
             ctx.fill();
 
             const bannerY = mainContentHeight + gap;

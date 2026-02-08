@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.0.4
+// @version      0-rc.0.5
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -233,10 +233,10 @@
             const arrowCX   = stateX + (col3W / 2);
             const arrowSize = 30;
             
-            const upArrowY      = 50;
-            const qTextY        = 140;
-            const songTextY     = 220;
-            const downArrowY    = 310;
+            const upArrowY      = 60;
+            const qTextY        = 135;
+            const songTextY     = 215;
+            const downArrowY    = 290;
 
             ctx.beginPath();
             ctx.moveTo(arrowCX,             upArrowY - arrowSize);
@@ -779,9 +779,11 @@
             }
 
             const hotSlots = [];
-            [...currentAwaySlots, ...currentHomeSlots].forEach(slotId => {
-                const pid = getPlayerId(slotId);
-                if (pid && match.streaks[pid] >= 3) hotSlots.push(slotId);
+            const hotPids  = Object.keys(match.streaks).filter(pid => match.streaks[pid] >= 3);
+            
+            hotPids.forEach(pid => {
+                const player = Object.values(quiz.players).find(p => p.gamePlayerId == pid);
+                if (player) hotSlots.push(player.teamNumber);
             });
 
             drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong, hotSlots)

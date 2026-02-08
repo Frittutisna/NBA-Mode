@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.0.7
+// @version      0-rc.0.8
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
@@ -140,8 +140,6 @@
             if (config.isSwapped) {
                 topNameStr  = config.teamNames.home;
                 botNameStr  = config.teamNames.away;
-                topTarget   = homeTarget;
-                botTarget   = awayTarget;
             }
 
             const topName       = topNameStr.substring(0, 3).toUpperCase();
@@ -809,11 +807,24 @@
                 homeTarget = match.totalScore.home + config.targetScore;
             }
 
-            drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong, hotSlots, awayTarget, homeTarget)
-                .then   (blob => uploadToLitterbox(blob))
-                .then   (link => chatMessage(mainMsg + suffixMsg + ` | Scorebug: ${link}`))
-                .catch  (err  => {
-                    console.error("Scorebug Error: ", err);
+            const scorebugPromise = new Promise((resolve, reject) => {
+                const timer = setTimeout(() => reject("Timeout"), 5000);
+                drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong, hotSlots, awayTarget, homeTarget)
+                    .then(blob => uploadToLitterbox(blob))
+                    .then(link => {
+                        clearTimeout    (timer);
+                        resolve         (link);
+                    })
+                    .catch(err => {
+                        clearTimeout    (timer);
+                        reject          (err);
+                    });
+            });
+
+            scorebugPromise
+                .then   (link   => chatMessage(mainMsg + suffixMsg + ` | Scorebug: ${link}`))
+                .catch  (err    => {
+                    console.error("Scorebug Error:", err);
                     chatMessage(mainMsg + suffixMsg);
                 });
         } else chatMessage(mainMsg + suffixMsg);

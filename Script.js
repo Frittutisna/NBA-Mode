@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.0.3
-// @description  Script to track NBA Mode on AMQ with Scorebug
+// @version      0-rc.0.4
+// @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
 // ==/UserScript==
@@ -125,7 +125,7 @@
         });
     }
 
-    function drawScorebug(lastResultName, prevPoss, nextPoss, displayQ, displaySong) {
+    function drawScorebug(lastResultName, prevPoss, nextPoss, displayQ, displaySong, hotSlots) {
         return new Promise((resolve) => {
             const canvas    = document.createElement('canvas');
             canvas.width    = 800;
@@ -154,9 +154,9 @@
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             const gap   = 10;
-            const col1W = 395;
-            const col2W = 195;
-            const col3W = 190;
+            const col1W = 390;
+            const col2W = 190;
+            const col3W = 200;
             
             const rowH_Name = 120;
             const rowH_Slot = 45;
@@ -167,15 +167,6 @@
                 ctx.textAlign       = align;
                 ctx.textBaseline    = 'middle';
                 ctx.fillText(text, x, y);
-            };
-
-            const getPlayerId = (teamId) => {
-                if (typeof quiz !== 'undefined' && quiz.players) {
-                    const p = Object.values(quiz.players).find(x => x.teamNumber == teamId);
-                    if (p) return p.gamePlayerId;
-                }
-                const pCache = playersCache.find(x => x.teamNumber == teamId);
-                return pCache ? pCache.gamePlayerId : null;
             };
 
             ctx.fillStyle = cBlue;
@@ -189,9 +180,8 @@
                 ctx.fillStyle = cBlue;
                 ctx.fillRect((slotW + gap) * idx, slotY_Top, slotW, rowH_Slot);
                 
-                const pid   = getPlayerId(slotId);
-                const isCap = config.captains.includes(slotId);
-                const isHot = pid && match.streaks[pid] >= 3;
+                const isCap = config.captains   .includes(slotId);
+                const isHot = hotSlots          .includes(slotId);
                 
                 const iconX = ((slotW + gap) * idx) + (slotW / 2);
                 const iconY = slotY_Top + (rowH_Slot / 2);
@@ -209,9 +199,8 @@
                 ctx.fillStyle = cOrange;
                 ctx.fillRect((slotW + gap) * idx, slotY_Bot, slotW, rowH_Slot);
                  
-                const pid   = getPlayerId(slotId);
-                const isCap = config.captains.includes(slotId);
-                const isHot = pid && match.streaks[pid] >= 3;
+                const isCap = config.captains   .includes(slotId);
+                const isHot = hotSlots          .includes(slotId);
                 
                 const iconX = ((slotW + gap) * idx) + (slotW / 2);
                 const iconY = slotY_Bot + (rowH_Slot / 2);
@@ -789,7 +778,13 @@
                 displayPoss = (displayQ % 2 !== 0) ? 'away' : 'home';
             }
 
-            drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong)
+            const hotSlots = [];
+            [...currentAwaySlots, ...currentHomeSlots].forEach(slotId => {
+                const pid = getPlayerId(slotId);
+                if (pid && match.streaks[pid] >= 3) hotSlots.push(slotId);
+            });
+
+            drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong, hotSlots)
                 .then   (blob => uploadToLitterbox(blob))
                 .then   (link => chatMessage(mainMsg + suffixMsg + ` | Scorebug: ${link}`))
                 .catch  (err  => {

@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name         AMQ NBA Mode
 // @namespace    https://github.com/Frittutisna
-// @version      0-rc.1.0
+// @version      0-rc.1.1
 // @description  Script to track NBA Mode on AMQ
 // @author       Frittutisna
 // @match        https://*.animemusicquiz.com/*
+// @grant        GM_xmlhttpRequest
+// @connect      uguu.se
 // ==/UserScript==
 
 (function() {
@@ -106,24 +108,32 @@
         "whatIs"            : "Explain a term (/nba whatIs [Term])"
     };
 
-    const litterboxUrl = "https://litterbox.catbox.moe/resources/internals/api.php";
-
-    function uploadToLitterbox(blob) {
+    const uguuUrl = "https://uguu.se/upload.php";
+    function uploadToUguu(blob) {
         return new Promise((resolve, reject) => {
             const formData = new FormData();
-            formData.append("reqtype",      "fileupload");
-            formData.append("time",         "1h");
-            formData.append("fileToUpload", blob,           "scorebug.png");
+            formData.append("files[]", blob, "scorebug.jpg");
 
-            fetch(litterboxUrl, {
-                method  : "POST",
-                body    : formData
-            })  .then(res => res.text())
-                .then(text => {
-                    if (text.startsWith("https"))   resolve(text);
-                    else                            reject("Upload Failed: " + text);
-                })
-                .catch(err => reject(err));
+            GM_xmlhttpRequest({
+                method      : "POST",
+                url         : uguuUrl,
+                data        : formData,
+                onload      : function(response) {
+                    if (response.status >= 200 && response.status < 300) {
+                        try {
+                            const json = JSON.parse(response.responseText);
+                            if (json.success && json.files && json.files.length > 0)    resolve (json.files[0].url);
+                            else                                                        reject  ("Upload Failed: "      + response.responseText);
+                        } catch (e) {
+                            const text = response.responseText.trim();
+                            if (text.startsWith("http"))                                resolve (text);
+                            else                                                        reject  ("Upload Failed: "      + text);
+                        }
+                    } else                                                              reject("HTTP Error: "           + response.status);  
+                },
+                onerror     : function(err)                                             {reject("CORS/Network Error: "  + err)},
+                ontimeout   : function()                                                {reject("Request timed out")}
+            });
         });
     }
 
@@ -808,7 +818,7 @@
             const scorebugPromise = new Promise((resolve, reject) => {
                 const timer = setTimeout(() => reject("Timeout"), 5000);
                 drawScorebug(resultDisplayName, prevPoss, displayPoss, displayQ, displaySong, hotSlots, awayTarget, homeTarget)
-                    .then(blob => uploadToLitterbox(blob))
+                    .then(blob => uploadToUguu(blob))
                     .then(link => {
                         clearTimeout    (timer);
                         resolve         (link);

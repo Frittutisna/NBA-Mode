@@ -1,4 +1,4 @@
-# NBA Mode v0-rc.1.0
+# NBA Mode v0-rc.1.1
 
 ## Table of Contents
 - [TLDR: What Do I Do?](#tldr-what-is-this-and-what-do-i-do)
